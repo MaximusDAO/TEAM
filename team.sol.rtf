@@ -1,0 +1,876 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2638
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 Menlo-Regular;}
+{\colortbl;\red255\green255\blue255;\red15\green112\blue1;\red6\green50\blue61;\red17\green67\blue89;
+\red0\green0\blue255;\red0\green0\blue0;\red19\green118\blue70;\red144\green1\blue18;\red12\green86\blue13;
+\red37\green154\blue53;\red223\green33\blue121;\red140\green108\blue11;\red33\green137\blue184;\red89\green98\blue106;
+\red35\green22\blue178;\red11\green97\blue255;\red193\green160\blue9;\red241\green173\blue38;}
+{\*\expandedcolortbl;;\cssrgb\c0\c50196\c0;\cssrgb\c392\c25490\c30588;\cssrgb\c6667\c33333\c42353;
+\cssrgb\c0\c0\c100000;\cssrgb\c0\c0\c0;\cssrgb\c3529\c52549\c34510;\cssrgb\c63922\c8235\c8235;\cssrgb\c392\c40392\c5882;
+\cssrgb\c15686\c65490\c27059;\cssrgb\c90980\c24314\c54902;\cssrgb\c61961\c49412\c3137;\cssrgb\c14510\c60784\c77255;\cssrgb\c42353\c45882\c49020;
+\cssrgb\c18824\c18824\c75294;\cssrgb\c0\c48235\c100000;\cssrgb\c80392\c68235\c784;\cssrgb\c96078\c72941\c18824;}
+\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs24 \cf2 \cb3 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 //SPDX-License-Identifier: UNLICENSED\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf5 \cb3 \strokec5 pragma\cf4 \strokec4  \cf5 \strokec5 solidity\cf4 \strokec4  \strokec6 ^\cf7 \strokec7 0.8.2\cf4 \strokec6 ;\cb1 \strokec4 \
+\cf5 \cb3 \strokec5 import\cf4 \strokec4  \cf8 \strokec8 "@openzeppelin/contracts/token/ERC20/ERC20.sol"\cf4 \strokec6 ;\cb1 \strokec4 \
+\cf5 \cb3 \strokec5 import\cf4 \strokec4  \cf8 \strokec8 "@openzeppelin/contracts/token/ERC20/IERC20.sol"\cf4 \strokec6 ;\cb1 \strokec4 \
+\cf5 \cb3 \strokec5 import\cf4 \strokec4  \cf8 \strokec8 "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol"\cf4 \strokec6 ;\cb1 \strokec4 \
+\cf5 \cb3 \strokec5 import\cf4 \strokec4  \cf8 \strokec8 "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"\cf4 \strokec6 ;\cb1 \strokec4 \
+\cf5 \cb3 \strokec5 import\cf4 \strokec4  \cf8 \strokec8 "@openzeppelin/contracts/utils/math/SafeMath.sol"\cf4 \strokec6 ;\cb1 \strokec4 \
+\cf5 \cb3 \strokec5 import\cf4 \strokec4  \cf8 \strokec8 "@openzeppelin/contracts/security/ReentrancyGuard.sol"\cf4 \strokec6 ;\cb1 \strokec4 \
+\
+\
+\cf5 \cb3 \strokec5 contract\cf4 \strokec4  HedronToken \strokec6 \{\cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3   \cf5 \strokec5 function\cf4 \strokec4  approve\strokec6 (\cf5 \strokec5 address\cf4 \strokec4  spender\strokec6 ,\strokec4  \cf5 \strokec5 uint256\cf4 \strokec4  amount\strokec6 )\strokec4  \cf9 \strokec9 external\cf4 \strokec4  \cf10 \strokec10 returns\cf4 \strokec4  \strokec6 (\cf5 \strokec5 bool\cf4 \strokec6 )\strokec4  \strokec6 \{\}\cb1 \strokec4 \
+\cb3   \cf5 \strokec5 function\cf4 \strokec4  transfer\strokec6 (\cf5 \strokec5 address\cf4 \strokec4  recipient\strokec6 ,\strokec4  \cf5 \strokec5 uint256\cf4 \strokec4  amount\strokec6 )\strokec4  \cf9 \strokec9 external\cf4 \strokec4  \cf10 \strokec10 returns\cf4 \strokec4  \strokec6 (\cf5 \strokec5 bool\cf4 \strokec6 )\strokec4  \strokec6 \{\}\cb1 \strokec4 \
+\cb3   \cf5 \strokec5 function\cf4 \strokec4  mintNative\strokec6 (\cf5 \strokec5 uint256\cf4 \strokec4  stakeIndex\strokec6 ,\strokec4  \cf5 \strokec5 uint40\cf4 \strokec4  stakeId\strokec6 )\strokec4  \cf9 \strokec9 external\cf4 \strokec4  \cf10 \strokec10 returns\cf4 \strokec4  \strokec6 (\cf5 \strokec5 uint256\cf4 \strokec6 )\strokec4  \strokec6 \{\}\cb1 \strokec4 \
+\cb3   \cf5 \strokec5 function\cf4 \strokec4  claimNative\strokec6 (\cf5 \strokec5 uint256\cf4 \strokec4  stakeIndex\strokec6 ,\strokec4  \cf5 \strokec5 uint40\cf4 \strokec4  stakeId\strokec6 )\strokec4  \cf9 \strokec9 external\cf4 \strokec4  \cf10 \strokec10 returns\cf4 \strokec4  \strokec6 (\cf5 \strokec5 uint256\cf4 \strokec6 )\strokec4  \strokec6 \{\}\cb1 \strokec4 \
+\cb3   \cf5 \strokec5 function\cf4 \strokec4  currentDay\strokec6 ()\strokec4  \cf9 \strokec9 external\cf4 \strokec4  \cf9 \strokec9 view\cf4 \strokec4  \cf10 \strokec10 returns\cf4 \strokec4  \strokec6 (\cf5 \strokec5 uint256\cf4 \strokec6 )\strokec4  \strokec6 \{\}\cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3 \strokec6 \}\cb1 \strokec4 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf5 \cb3 \strokec5 contract\cf4 \strokec4  HEXToken \strokec6 \{\cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3   \cf5 \strokec5 function\cf4 \strokec4  currentDay\strokec6 ()\strokec4  \cf9 \strokec9 external\cf4 \strokec4  \cf9 \strokec9 view\cf4 \strokec4  \cf10 \strokec10 returns\cf4 \strokec4  \strokec6 (\cf5 \strokec5 uint256\cf4 \strokec6 )\{\}\cb1 \strokec4 \
+\cb3   \cf5 \strokec5 function\cf4 \strokec4  stakeStart\strokec6 (\cf5 \strokec5 uint256\cf4 \strokec4  newStakedHearts\strokec6 ,\strokec4  \cf5 \strokec5 uint256\cf4 \strokec4  newStakedDays\strokec6 )\strokec4  \cf9 \strokec9 external\cf4 \strokec4  \strokec6 \{\}\cb1 \strokec4 \
+\cb3   \cf5 \strokec5 function\cf4 \strokec4  approve\strokec6 (\cf5 \strokec5 address\cf4 \strokec4  spender\strokec6 ,\strokec4  \cf5 \strokec5 uint256\cf4 \strokec4  amount\strokec6 )\strokec4  \cf9 \strokec9 external\cf4 \strokec4  \cf10 \strokec10 returns\cf4 \strokec4  \strokec6 (\cf5 \strokec5 bool\cf4 \strokec6 )\strokec4  \strokec6 \{\}\cb1 \strokec4 \
+\cb3   \cf5 \strokec5 function\cf4 \strokec4  transfer\strokec6 (\cf5 \strokec5 address\cf4 \strokec4  recipient\strokec6 ,\strokec4  \cf5 \strokec5 uint256\cf4 \strokec4  amount\strokec6 )\strokec4  \cf9 \strokec9 public\cf4 \strokec4  \cf10 \strokec10 returns\cf4 \strokec4  \strokec6 (\cf5 \strokec5 bool\cf4 \strokec6 )\strokec4  \strokec6 \{\}\cb1 \strokec4 \
+\cb3   \cf5 \strokec5 function\cf4 \strokec4  stakeEnd\strokec6 (\cf5 \strokec5 uint256\cf4 \strokec4  stakeIndex\strokec6 ,\strokec4  \cf5 \strokec5 uint40\cf4 \strokec4  stakeIdParam\strokec6 )\strokec4  \cf9 \strokec9 public\cf4 \strokec4  \strokec6 \{\}\cb1 \strokec4 \
+\cb3   \cf5 \strokec5 function\cf4 \strokec4  stakeCount\strokec6 (\cf5 \strokec5 address\cf4 \strokec4  stakerAddr\strokec6 )\strokec4  \cf9 \strokec9 external\cf4 \strokec4  \cf9 \strokec9 view\cf4 \strokec4  \cf10 \strokec10 returns\cf4 \strokec4  \strokec6 (\cf5 \strokec5 uint256\cf4 \strokec6 )\strokec4  \strokec6 \{\}\cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3 \strokec6 \}\cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 /*\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 \uc0\u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 \uc0\u9472 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9472 \cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 \uc0\u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9608 \u9608 \u9472 \cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 \uc0\u9472 \u9608 \u9608 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9472 \cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 \uc0\u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9617 \u9617 \u9608 \u9608 \u9617 \u9617 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 \uc0\u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9608 \u9608 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9608 \u9608 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9472 \cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 \uc0\u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9608 \u9608 \u9472 \cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 \uc0\u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9608 \u9608 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9608 \u9608 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 \uc0\u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9617 \u9617 \u9608 \u9608 \u9617 \u9617 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 \uc0\u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 \uc0\u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9617 \u9608 \u9608 \u9472 \cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 \uc0\u9472 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9472 \u9472 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9472 \u9472 \u9472 \u9472 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9608 \u9472 \cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 \uc0\u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \u9472 \cf4 \cb1 \strokec4 \
+\
+\cf2 \cb3 \strokec2                                     \uc0\u9608 \u9600 \u8195 \u9600 \u9608 \u9600 \u8195 \u9608 \u9600 \u9608 \u8195 \u9608 \u9600 \u9600 \u8195 \u9608 \u9604 \u9617 \u9608 \u8195 \u9608 \u9600 \u9600 \u8195 \u9600 \u9608 \u9600 \u8195 \u9608 \u9617 \u9608 \u8195  \u8195 \u9604 \u9600 \u9608 \u8195 \u9608 \u9604 \u9617 \u9608 \u8195 \u9608 \u9600 \u9604 \u8195  \u8195 \u9608 \u9617 \u9608 \u8195 \u9608 \u9600 \u9608 \u8195 \u9608 \u9604 \u9617 \u9608 \u8195 \u9608 \u9600 \u9608 \u8195 \u9608 \u9600 \u9608 \cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2                                     \uc0\u9604 \u9608 \u8195 \u9617 \u9608 \u9617 \u8195 \u9608 \u9600 \u9604 \u8195 \u9608 \u9608 \u9604 \u8195 \u9608 \u9617 \u9600 \u9608 \u8195 \u9608 \u9604 \u9608 \u8195 \u9617 \u9608 \u9617 \u8195 \u9608 \u9600 \u9608 \u8195  \u8195 \u9608 \u9600 \u9608 \u8195 \u9608 \u9617 \u9600 \u9608 \u8195 \u9608 \u9604 \u9600 \u8195  \u8195 \u9608 \u9600 \u9608 \u8195 \u9608 \u9604 \u9608 \u8195 \u9608 \u9617 \u9600 \u9608 \u8195 \u9608 \u9604 \u9608 \u8195 \u9608 \u9600 \u9604 \cf4 \cb1 \strokec4 \
+\
+\cf2 \cb3 \strokec2 // Maximus is a contract for trustlessly pooling a single max length hex stake.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Anyone may choose to mint 1 MAXI per HEX deposited into the Maximus Contract Address during the minting phase.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Anyone may choose to pay for the gas to start and end the stake on behalf of the Maximus Contract.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // Anyone may choose to pay for the gas to mint Hedron the stake earns on behalf of the Maximus Contract.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // MAXI is a standard ERC20 token, only minted upon HEX deposit and burnt upon HEX redemption with no pre-mine or contract fee.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // MAXI holders may choose to burn MAXI to redeem HEX principal and yield (Including HEDRON) pro-rata from the Maximus Contract Address during the redemption phase.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 //\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 // |--- Minting Phase---|---------- 5555 Day Stake Phase ------------...-----|------ Redemption Phase ---------->\cf4 \cb1 \strokec4 \
+\
+\
+\cf2 \cb3 \strokec2 THE MAXIMUS CONTRACT, SUPPORTING WEBSITES, AND ALL OTHER INTERFACES (THE SOFTWARE) IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2 LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.\cf4 \cb1 \strokec4 \
+\
+\cf2 \cb3 \strokec2 BY INTERACTING WITH THE SOFTWARE YOU ARE ASSERTING THAT YOU BEAR ALL THE RISKS ASSOCIATED WITH DOING SO. AN INFINITE NUMBER OF UNPREDICTABLE THINGS MAY GO WRONG WHICH COULD POTENTIALLY RESULT IN CRITICAL FAILURE AND FINANCIAL LOSS. BY INTERACTING WITH THE SOFTWARE YOU ARE ASSERTING THAT YOU AGREE THERE IS NO RECOURSE AVAILABLE AND YOU WILL NOT SEEK IT.\cf4 \cb1 \strokec4 \
+\
+\cf2 \cb3 \strokec2 INTERACTING WITH THE SOFTWARE SHALL NOT BE CONSIDERED AN INVESTMENT OR A COMMON ENTERPRISE. INSTEAD, INTERACTING WITH THE SOFTWARE IS EQUIVALENT TO CARPOOLING WITH FRIENDS TO SAVE ON GAS AND EXPERIENCE THE BENEFITS OF THE H.O.V. LANE. \cf4 \cb1 \strokec4 \
+\
+\cf2 \cb3 \strokec2 YOU SHALL HAVE NO EXPECTATION OF PROFIT OR ANY TYPE OF GAIN FROM THE WORK OF OTHER PEOPLE.\cf4 \cb1 \strokec4 \
+\
+\cf2 \cb3 \strokec2 */\cf4 \cb1 \strokec4 \
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf5 \cb3 \strokec5 contract\cf4 \strokec4  PerpetualPool \cf5 \strokec5 is\cf4 \strokec4  ERC20\strokec6 ,\strokec4  ERC20Burnable\strokec6 ,\strokec4  ReentrancyGuard \strokec6 \{\cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3     \cf2 \strokec2 // all days are measured in terms of the HEX contract day number\cf4 \cb1 \strokec4 \
+\cb3     \cf5 \strokec5 uint256\cf4 \strokec4  MINT_DURATION\strokec6 ;\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 uint256\cf4 \strokec4  MINTING_PHASE_START\strokec6 ;\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 uint256\cf4 \strokec4  MINTING_PHASE_END\strokec6 ;\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 uint256\cf4 \strokec4  STAKE_START_DAY\strokec6 ;\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 uint256\cf4 \strokec4  STAKE_END_DAY\strokec6 ;\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 uint256\cf4 \strokec4  STAKE_LENGTH\strokec6 ;\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 uint256\cf4 \strokec4  HEX_REDEMPTION_RATE\strokec6 ;\strokec4  \cf2 \strokec2 // Number of HEX units redeemable per MAXI\cf4 \cb1 \strokec4 \
+\cb3     \cf5 \strokec5 uint256\cf4 \strokec4  HEDRON_REDEMPTION_RATE\strokec6 ;\strokec4  \cf2 \strokec2 // Number of HEDRON units redeemable per MAXI\cf4 \cb1 \strokec4 \
+\cb3     \cf5 \strokec5 bool\cf4 \strokec4  HAS_STAKE_STARTED\strokec6 ;\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 bool\cf4 \strokec4  HAS_STAKE_ENDED\strokec6 ;\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 bool\cf4 \strokec4  HAS_HEDRON_MINTED\strokec6 ;\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 bool\cf4 \strokec4  STAKE_IS_ACTIVE\strokec6 ;\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 address\cf4 \strokec4  END_STAKER\strokec6 ;\strokec4  \cb1 \
+\cb3     \cf5 \strokec5 address\cf4 \strokec4  TEAM_CONTRACT_ADDRESS\strokec6 ;\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 uint256\cf4 \strokec4  CURRENT_STAKE_PRINCIPAL\strokec6 ;\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 uint256\cf4 \strokec4  CURRENT_PERIOD\strokec6 ;\cb1 \strokec4 \
+\
+\cb3     \cb1 \
+\cb3     \cf11 \strokec11 constructor\cf4 \strokec6 (\cf5 \strokec5 uint256\cf4 \strokec4  mint_duration\strokec6 ,\strokec4  \cf5 \strokec5 uint256\cf4 \strokec4  stake_duration\strokec6 ,\strokec4  \cf5 \strokec5 address\cf4 \strokec4  team_address\strokec6 ,\strokec4  \cf5 \strokec5 string\cf4 \strokec4  \cf12 \cb3 \strokec12 memory\cf4 \cb3 \strokec4  name\strokec6 ,\strokec4  \cf5 \strokec5 string\cf4 \strokec4  \cf12 \cb3 \strokec12 memory\cf4 \cb3 \strokec4  ticker\strokec6 )\strokec4  ERC20\strokec6 (\strokec4 name\strokec6 ,\strokec4  ticker\strokec6 )\strokec4  ReentrancyGuard\strokec6 ()\strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         MINT_DURATION\strokec6 =\strokec4 mint_duration\strokec6 ;\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  start_day\strokec6 =\strokec4 hex_token\strokec6 .\strokec4 currentDay\strokec6 ();\cb1 \strokec4 \
+\cb3         MINTING_PHASE_START \strokec6 =\strokec4  start_day\strokec6 ;\cb1 \strokec4 \
+\cb3         MINTING_PHASE_END \strokec6 =\strokec4  start_day\strokec6 +\strokec4 mint_duration\strokec6 ;\cb1 \strokec4 \
+\cb3         STAKE_LENGTH\strokec6 =\strokec4 stake_duration\strokec6 ;\strokec4  \cb1 \
+\cb3         HAS_STAKE_STARTED\strokec6 =\cf5 \strokec5 false\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3         HAS_STAKE_ENDED \strokec6 =\strokec4  \cf5 \strokec5 false\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3         HAS_HEDRON_MINTED\strokec6 =\cf5 \strokec5 false\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3         STAKE_IS_ACTIVE\strokec6 =\cf5 \strokec5 false\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3         TEAM_CONTRACT_ADDRESS\strokec6 =\strokec4 team_address\strokec6 ;\cb1 \strokec4 \
+\cb3         HEX_REDEMPTION_RATE\strokec6 =\cf7 \strokec7 100000000\cf4 \strokec6 ;\strokec4  \cf2 \strokec2 // HEX and MINI are 1:1 convertible during first minting/redemption phase. Then this will scale based on treasury value.\cf4 \cb1 \strokec4 \
+\cb3         HEDRON_REDEMPTION_RATE\strokec6 =\cf7 \strokec7 0\cf4 \strokec6 ;\strokec4  \cf2 \strokec2 //no hedron is redeemable until minting has occurred\cf4 \cb1 \strokec4 \
+\cb3         CURRENT_STAKE_PRINCIPAL\strokec6 =\cf7 \strokec7 0\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3         CURRENT_PERIOD\strokec6 =\cf7 \strokec7 0\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3         \cb1 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 function\cf4 \strokec4  incrementPeriod\strokec6 ()\strokec4  \cf9 \strokec9 public\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         CURRENT_PERIOD\strokec6 =\strokec4 CURRENT_PERIOD\strokec6 +\cf7 \strokec7 1\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3     \cf2 \strokec2 /**\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2     * @dev View number of decimal places the MAXI token is divisible to. Manually overwritten from default 18 to 8 to match that of HEX. 1 MAXI = 10^8 mini\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2     */\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3     \cb1 \
+\cb3     \cf5 \strokec5 function\cf4 \strokec4  decimals\strokec6 ()\strokec4  \cf9 \strokec9 public\cf4 \strokec4  \cf9 \strokec9 view\cf4 \strokec4  \cf13 \strokec13 virtual\cf4 \strokec4  \cf14 \strokec14 override\cf4 \strokec4  \cf10 \strokec10 returns\cf4 \strokec4  \strokec6 (\cf5 \strokec5 uint8\cf4 \strokec6 )\strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         \cf10 \strokec10 return\cf4 \strokec4  \cf7 \strokec7 8\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 address\cf4 \strokec4  MAXI_ADDRESS \strokec6 =\cf5 \strokec5 address\cf4 \strokec6 (\cf13 \strokec13 this\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 address\cf4 \strokec4  \cf5 \strokec5 constant\cf4 \strokec4  HEX_ADDRESS \strokec6 =\strokec4  \cf15 \strokec15 0x2b591e99afE9f32eAA6214f7B7629768c40Eeb39\cf4 \strokec6 ;\strokec4  \cf2 \strokec2 // "2b, 5 9 1e? that is the question..."\cf4 \cb1 \strokec4 \
+\cb3     \cf5 \strokec5 address\cf4 \strokec4  \cf5 \strokec5 constant\cf4 \strokec4  HEDRON_ADDRESS\strokec6 =\cf15 \strokec15 0x3819f64f282bf135d62168C1e513280dAF905e06\cf4 \strokec6 ;\strokec4  \cb1 \
+\
+\cb3     IERC20 hex_contract \strokec6 =\strokec4  IERC20\strokec6 (\strokec4 HEX_ADDRESS\strokec6 );\cb1 \strokec4 \
+\cb3     IERC20 hedron_contract\strokec6 =\strokec4 IERC20\strokec6 (\strokec4 HEDRON_ADDRESS\strokec6 );\cb1 \strokec4 \
+\cb3     HEXToken hex_token \strokec6 =\strokec4  HEXToken\strokec6 (\strokec4 HEX_ADDRESS\strokec6 );\cb1 \strokec4 \
+\cb3     HedronToken hedron_token \strokec6 =\strokec4  HedronToken\strokec6 (\strokec4 HEDRON_ADDRESS\strokec6 );\cb1 \strokec4 \
+\cb3     \cf2 \strokec2 // public function\cf4 \cb1 \strokec4 \
+\cb3     \cf2 \strokec2 /**\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2     * @dev Returns the HEX Day that the Minting Phase started.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2     * @return HEX Day that the Minting Phase started.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2     */\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3     \cf5 \strokec5 function\cf4 \strokec4  getMintingPhaseStartDay\strokec6 ()\strokec4  \cf9 \strokec9 external\cf4 \strokec4  \cf9 \strokec9 view\cf4 \strokec4  \cf10 \strokec10 returns\cf4 \strokec4  \strokec6 (\cf5 \strokec5 uint256\cf4 \strokec6 )\strokec4  \strokec6 \{\cf10 \strokec10 return\cf4 \strokec4  MINTING_PHASE_START\strokec6 ;\}\cb1 \strokec4 \
+\cb3     \cf2 \strokec2 /**\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2     * @dev Returns the HEX Day that the Minting Phase ends.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2     * @return HEX Day that the Minting Phase ends.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2     */\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3     \cf5 \strokec5 function\cf4 \strokec4  getMintingPhaseEndDay\strokec6 ()\strokec4  \cf9 \strokec9 external\cf4 \strokec4  \cf9 \strokec9 view\cf4 \strokec4  \cf10 \strokec10 returns\cf4 \strokec4  \strokec6 (\cf5 \strokec5 uint256\cf4 \strokec6 )\strokec4  \strokec6 \{\cf10 \strokec10 return\cf4 \strokec4  MINTING_PHASE_END\strokec6 ;\}\cb1 \strokec4 \
+\cb3     \cf2 \strokec2 /**\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2     * @dev Returns the HEX Day that the Maximus HEX Stake started.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2     * @return HEX Day that the Maximus HEX Stake started.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2     */\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3     \cf5 \strokec5 function\cf4 \strokec4  getStakeStartDay\strokec6 ()\strokec4  \cf9 \strokec9 external\cf4 \strokec4  \cf9 \strokec9 view\cf4 \strokec4  \cf10 \strokec10 returns\cf4 \strokec4  \strokec6 (\cf5 \strokec5 uint256\cf4 \strokec6 )\strokec4  \strokec6 \{\cf10 \strokec10 return\cf4 \strokec4  STAKE_START_DAY\strokec6 ;\}\cb1 \strokec4 \
+\cb3     \cf2 \strokec2 /**\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2     * @dev Returns the HEX Day that the Maximus HEX Stake ends.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2     * @return HEX Day that the Maximus HEX Stake ends.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2     */\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3     \cf5 \strokec5 function\cf4 \strokec4  getStakeEndDay\strokec6 ()\strokec4  \cf9 \strokec9 external\cf4 \strokec4  \cf9 \strokec9 view\cf4 \strokec4  \cf10 \strokec10 returns\cf4 \strokec4  \strokec6 (\cf5 \strokec5 uint256\cf4 \strokec6 )\strokec4  \strokec6 \{\cf10 \strokec10 return\cf4 \strokec4  STAKE_END_DAY\strokec6 ;\}\cb1 \strokec4 \
+\cb3     \cf2 \strokec2 /**\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2     * @dev Returns the rate at which MAXI may be redeemed for HEX. "Number of HEX hearts per 1 MAXI redeemed."\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2     * @return Rate at which MAXI may be redeemed for HEX. "Number of HEX hearts per 1 MAXI redeemed."\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2     */\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3     \cf5 \strokec5 function\cf4 \strokec4  getHEXRedemptionRate\strokec6 ()\strokec4  \cf9 \strokec9 external\cf4 \strokec4  \cf9 \strokec9 view\cf4 \strokec4  \cf10 \strokec10 returns\cf4 \strokec4  \strokec6 (\cf5 \strokec5 uint256\cf4 \strokec6 )\strokec4  \strokec6 \{\cf10 \strokec10 return\cf4 \strokec4  HEX_REDEMPTION_RATE\strokec6 ;\}\cb1 \strokec4 \
+\cb3     \cf2 \strokec2 /**\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2     * @dev Returns the rate at which MAXI may be redeemed for HEDRON.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2     * @return Rate at which MAXI may be redeemed for HDRN.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2     */\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3     \cf5 \strokec5 function\cf4 \strokec4  getHedronRedemptionRate\strokec6 ()\strokec4  \cf9 \strokec9 external\cf4 \strokec4  \cf9 \strokec9 view\cf4 \strokec4  \cf10 \strokec10 returns\cf4 \strokec4  \strokec6 (\cf5 \strokec5 uint256\cf4 \strokec6 )\strokec4  \strokec6 \{\cf10 \strokec10 return\cf4 \strokec4  HEDRON_REDEMPTION_RATE\strokec6 ;\}\cb1 \strokec4 \
+\
+\cb3     \cf2 \strokec2 /**\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2     * @dev Returns the current HEX day."\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2     * @return Current HEX Day\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2     */\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3     \cf5 \strokec5 function\cf4 \strokec4  getCurrentPeriod\strokec6 ()\strokec4  \cf9 \strokec9 external\cf4 \strokec4  \cf9 \strokec9 view\cf4 \strokec4  \cf10 \strokec10 returns\cf4 \strokec4  \strokec6 (\cf5 \strokec5 uint256\cf4 \strokec6 )\{\cb1 \strokec4 \
+\cb3         \cf10 \strokec10 return\cf4 \strokec4  CURRENT_PERIOD\strokec6 ;\cb1 \strokec4 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3     \cf2 \strokec2 /**\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2     * @dev Returns the current Stake Cycle Period. Where 0 and all even numbers are minting/redemption phases and all odd numbers are staking phases."\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2     * @return Current Period\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2     */\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3     \cf5 \strokec5 function\cf4 \strokec4  getHexDay\strokec6 ()\strokec4  \cf9 \strokec9 external\cf4 \strokec4  \cf9 \strokec9 view\cf4 \strokec4  \cf10 \strokec10 returns\cf4 \strokec4  \strokec6 (\cf5 \strokec5 uint256\cf4 \strokec6 )\{\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  day \strokec6 =\strokec4  hex_token\strokec6 .\strokec4 currentDay\strokec6 ();\cb1 \strokec4 \
+\cb3         \cf10 \strokec10 return\cf4 \strokec4  day\strokec6 ;\cb1 \strokec4 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3      \cf2 \strokec2 /**\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2     * @dev Returns the current HEDRON day."\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2     * @return day Current HEDRON Day\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2     */\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3     \cf5 \strokec5 function\cf4 \strokec4  getHedronDay\strokec6 ()\strokec4  \cf9 \strokec9 external\cf4 \strokec4  \cf9 \strokec9 view\cf4 \strokec4  \cf10 \strokec10 returns\cf4 \strokec4  \strokec6 (\cf5 \strokec5 uint\cf4 \strokec4  day\strokec6 )\strokec4  \strokec6 \{\cf10 \strokec10 return\cf4 \strokec4  hedron_token\strokec6 .\strokec4 currentDay\strokec6 ();\}\cb1 \strokec4 \
+\
+\cb3      \cf2 \strokec2 /**\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2     * @dev Returns the address of the person who ends stake. May be used by external gas pooling contracts. If stake has not been ended yet will return 0x000...000"\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2     * @return end_staker_address This person should be honored and celebrated as a hero.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2     */\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3     \cf5 \strokec5 function\cf4 \strokec4  getEndStaker\strokec6 ()\strokec4  \cf9 \strokec9 external\cf4 \strokec4  \cf9 \strokec9 view\cf4 \strokec4  \cf10 \strokec10 returns\cf4 \strokec4  \strokec6 (\cf5 \strokec5 address\cf4 \strokec4  end_staker_address\strokec6 )\strokec4  \strokec6 \{\cf10 \strokec10 return\cf4 \strokec4  END_STAKER\strokec6 ;\}\cb1 \strokec4 \
+\
+\cb3     \cf2 \strokec2 // MAXI Issuance and Redemption Functions\cf4 \cb1 \strokec4 \
+\cb3     \cf2 \strokec2 /**\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2      * @dev Mints MAXI.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      * @param amount of MAXI to mint, measured in minis\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      */\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3     \cf5 \strokec5 function\cf4 \strokec4  mint\strokec6 (\cf5 \strokec5 uint256\cf4 \strokec4  amount\strokec6 )\strokec4  \cf9 \strokec9 private\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         _mint\strokec6 (\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ,\strokec4  amount\strokec6 );\cb1 \strokec4 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3      \cf2 \strokec2 /**\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2      * @dev Ensures that MAXI Minting Phase is ongoing and that the user has allowed the Maximus Contract address to spend the amount of HEX the user intends to pledge to Maximus. Then sends the designated HEX from the user to the Maximus Contract address and mints 1 MAXI per HEX pledged.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      * @param amount of HEX user chose to pledge, measured in hearts\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      */\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3     \cf5 \strokec5 function\cf4 \strokec4  pledgeHEX\strokec6 (\cf5 \strokec5 uint256\cf4 \strokec4  amount\strokec6 )\strokec4  nonReentrant \cf9 \strokec9 external\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         \cf16 \strokec16 require\cf4 \strokec6 (\strokec4 STAKE_IS_ACTIVE\strokec6 ==\cf5 \strokec5 false\cf4 \strokec6 ,\strokec4  \cf8 \strokec8 "Minting may only be done if a stake is not active"\cf4 \strokec6 );\cb1 \strokec4 \
+\
+\cb3         \cf16 \strokec16 require\cf4 \strokec6 (\strokec4 hex_token\strokec6 .\strokec4 currentDay\strokec6 ()>\strokec4 MINTING_PHASE_START\strokec6 ,\strokec4  \cf8 \strokec8 "Minting Phase Hasn't Started"\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         \cf16 \strokec16 require\cf4 \strokec6 (\strokec4 hex_token\strokec6 .\strokec4 currentDay\strokec6 ()<=\strokec4 MINTING_PHASE_END\strokec6 ,\strokec4  \cf8 \strokec8 "Minting Phase is Done"\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         \cf16 \strokec16 require\cf4 \strokec6 (\strokec4 hex_contract\strokec6 .\strokec4 allowance\strokec6 (\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ,\strokec4  MAXI_ADDRESS\strokec6 )>=\strokec4 amount\strokec6 ,\strokec4  \cf8 \strokec8 "Please approve contract address as allowed spender in the hex contract."\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 address\cf4 \strokec4  from \strokec6 =\strokec4  \cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ;\cb1 \strokec4 \
+\cb3         hex_contract\strokec6 .\strokec4 transferFrom\strokec6 (\strokec4 from\strokec6 ,\strokec4  MAXI_ADDRESS\strokec6 ,\strokec4  amount\strokec6 );\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  mintable_amount \strokec6 =\strokec4  \strokec6 (\cf7 \strokec7 10\cf4 \strokec4 **\cf7 \strokec7 8\cf4 \strokec6 )*\strokec4 amount\strokec6 /\strokec4 HEX_REDEMPTION_RATE\strokec6 ;\cb1 \strokec4 \
+\cb3         mint\strokec6 (\strokec4 mintable_amount\strokec6 );\cb1 \strokec4 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3      \cf2 \strokec2 /**\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2      * @dev Ensures that it is currently a redemption period (before stake starts or after stake ends) and that the user has at least the number of maxi they entered. Then it calculates how much hex may be redeemed, burns the MAXI, and transfers them the hex.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      * @param amount_MAXI number of MAXI that the user is redeeming, measured in mini\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      */\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3     \cf5 \strokec5 function\cf4 \strokec4  redeemHEX\strokec6 (\cf5 \strokec5 uint256\cf4 \strokec4  amount_MAXI\strokec6 )\strokec4  nonReentrant \cf9 \strokec9 external\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         \cf16 \strokec16 require\cf4 \strokec6 (\strokec4 STAKE_IS_ACTIVE\strokec6 ==\cf5 \strokec5 false\cf4 \strokec6 ,\strokec4  \cf8 \strokec8 "Redemption can not happen while stake is active"\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         \cf2 \strokec2 //require(HAS_STAKE_STARTED==false || HAS_STAKE_ENDED==true , "Redemption can only happen before stake starts or after stake ends.");\cf4 \cb1 \strokec4 \
+\cb3         \cb1 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  yourMAXI \strokec6 =\strokec4  balanceOf\strokec6 (\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 );\cb1 \strokec4 \
+\cb3         \cf16 \strokec16 require\cf4 \strokec6 (\strokec4 yourMAXI\strokec6 >=\strokec4 amount_MAXI\strokec6 ,\strokec4  \cf8 \strokec8 "You do not have that much MAXI."\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  raw_redeemable_amount \strokec6 =\strokec4  amount_MAXI\strokec6 *\strokec4 HEX_REDEMPTION_RATE\strokec6 ;\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  redeemable_amount \strokec6 =\strokec4  raw_redeemable_amount\strokec6 /\cf7 \strokec7 100000000\cf4 \strokec6 ;\strokec4  \cf2 \strokec2 //scaled back down to handle integer rounding\cf4 \cb1 \strokec4 \
+\cb3         burn\strokec6 (\strokec4 amount_MAXI\strokec6 );\cb1 \strokec4 \
+\cb3         hex_token\strokec6 .\strokec4 transfer\strokec6 (\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ,\strokec4  redeemable_amount\strokec6 );\cb1 \strokec4 \
+\cb3         \cb1 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3     \cf2 \strokec2 //Staking Functions\cf4 \cb1 \strokec4 \
+\cb3     \cf2 \strokec2 // Anyone may run these functions during the allowed time, so long as they pay the gas.\cf4 \cb1 \strokec4 \
+\cb3     \cf2 \strokec2 // While nothing is forcing you to, gracious Maximus members will tip the sender some ETH for paying gas to end your stake.\cf4 \cb1 \strokec4 \
+\
+\cb3     \cf2 \strokec2 /**\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2      * @dev Ensures that the stake has not started yet and that the minting phase is over. Then it stakes all the hex in the contract and schedules the STAKE_END_DAY.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      * @notice This will trigger the start of the HEX stake. If you run this, you will pay the gas on behalf of the contract and you should not expect reimbursement.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      \cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      */\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3     \cb1 \
+\
+\cb3     \cf5 \strokec5 function\cf4 \strokec4  stakeHEX\strokec6 ()\strokec4  nonReentrant \cf9 \strokec9 external\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         \cf2 \strokec2 //require(HAS_STAKE_STARTED==false, "Stake has already been started.");\cf4 \cb1 \strokec4 \
+\cb3         \cf16 \strokec16 require\cf4 \strokec6 (\strokec4 STAKE_IS_ACTIVE\strokec6 ==\cf5 \strokec5 false\cf4 \strokec6 ,\strokec4  \cf8 \strokec8 "Stake has already started."\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  current_day \strokec6 =\strokec4  hex_token\strokec6 .\strokec4 currentDay\strokec6 ();\cb1 \strokec4 \
+\cb3         \cf16 \strokec16 require\cf4 \strokec6 (\strokec4 current_day\strokec6 >\strokec4 MINTING_PHASE_END\strokec6 ,\strokec4  \cf8 \strokec8 "Minting Phase is still ongoing - see MINTING_PHASE_END day."\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  amount \strokec6 =\strokec4  hex_contract\strokec6 .\strokec4 balanceOf\strokec6 (\cf5 \strokec5 address\cf4 \strokec6 (\cf13 \strokec13 this\cf4 \strokec6 ));\cb1 \strokec4 \
+\cb3         \cb1 \
+\cb3         _stakeHEX\strokec6 (\strokec4 amount\strokec6 );\cb1 \strokec4 \
+\cb3         CURRENT_STAKE_PRINCIPAL\strokec6 =\strokec4 amount\strokec6 ;\cb1 \strokec4 \
+\cb3         HAS_STAKE_STARTED\strokec6 =\cf5 \strokec5 true\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3         HAS_STAKE_ENDED\strokec6 =\cf5 \strokec5 false\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3         STAKE_START_DAY\strokec6 =\strokec4 current_day\strokec6 ;\cb1 \strokec4 \
+\cb3         STAKE_END_DAY\strokec6 =\strokec4 current_day\strokec6 +\strokec4 STAKE_LENGTH\strokec6 ;\cb1 \strokec4 \
+\cb3         STAKE_IS_ACTIVE\strokec6 =\cf5 \strokec5 true\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3         CURRENT_PERIOD \strokec6 =\strokec4  CURRENT_PERIOD\strokec6 +\cf7 \strokec7 1\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 function\cf4 \strokec4  _stakeHEX\strokec6 (\cf5 \strokec5 uint256\cf4 \strokec4  amount\strokec6 )\strokec4  \cf9 \strokec9 private\cf4 \strokec4   \strokec6 \{\cb1 \strokec4 \
+\cb3         hex_token\strokec6 .\strokec4 stakeStart\strokec6 (\strokec4 amount\strokec6 ,\strokec4 STAKE_LENGTH\strokec6 );\cb1 \strokec4 \
+\cb3         \strokec6 \}\cb1 \strokec4 \
+\cb3     \cb1 \
+\cb3     \cf5 \strokec5 function\cf4 \strokec4  _endStakeHEX\strokec6 (\cf5 \strokec5 uint256\cf4 \strokec4  stakeIndex\strokec6 ,\cf5 \strokec5 uint40\cf4 \strokec4  stakeIdParam \strokec6 )\strokec4  \cf9 \strokec9 private\cf4 \strokec4   \strokec6 \{\cb1 \strokec4 \
+\cb3         hex_token\strokec6 .\strokec4 stakeEnd\strokec6 (\strokec4 stakeIndex\strokec6 ,\strokec4  stakeIdParam\strokec6 );\cb1 \strokec4 \
+\cb3         \strokec6 \}\cb1 \strokec4 \
+\cb3     \cf2 \strokec2 /**\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2      * @dev Ensures that the stake is fully complete and that it has not already been ended. Then it ends the hex stake and updates the redemption rate.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      * @notice This will trigger the ending of the HEX stake and calculate the new redemption rate. This may be very expensive. If you run this, you will pay the gas on behalf of the contract and you should not expect reimbursement.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      * @param stakeIndex index of stake found in stakeLists[contract_address] in hex contract.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      * @param stakeIdParam stake identifier found in stakeLists[contract_address] in hex contract.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      */\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3     \cf5 \strokec5 function\cf4 \strokec4  endStakeHEX\strokec6 (\cf5 \strokec5 uint256\cf4 \strokec4  stakeIndex\strokec6 ,\cf5 \strokec5 uint40\cf4 \strokec4  stakeIdParam \strokec6 )\strokec4  nonReentrant \cf9 \strokec9 external\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         \cf16 \strokec16 require\cf4 \strokec6 (\strokec4 hex_token\strokec6 .\strokec4 currentDay\strokec6 ()>\strokec4 STAKE_END_DAY\strokec6 ,\strokec4  \cf8 \strokec8 "Stake is not complete yet."\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         \cf2 \strokec2 //require(HAS_STAKE_STARTED==true && HAS_STAKE_ENDED==false, "Stake has already been started.");\cf4 \cb1 \strokec4 \
+\cb3         \cf16 \strokec16 require\cf4 \strokec6 (\strokec4 STAKE_IS_ACTIVE\strokec6 ==\cf5 \strokec5 true\cf4 \strokec6 ,\strokec4  \cf8 \strokec8 "Stake must be active."\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         _endStakeHEX\strokec6 (\strokec4 stakeIndex\strokec6 ,\strokec4  stakeIdParam\strokec6 );\cb1 \strokec4 \
+\cb3         HAS_STAKE_ENDED\strokec6 =\cf5 \strokec5 true\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  hex_balance \strokec6 =\strokec4  hex_contract\strokec6 .\strokec4 balanceOf\strokec6 (\cf5 \strokec5 address\cf4 \strokec6 (\cf13 \strokec13 this\cf4 \strokec6 ));\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  bpb_bonus_sharing_amount \strokec6 =\strokec4  get_bonus_sharing_amount\strokec6 (\strokec4 CURRENT_STAKE_PRINCIPAL\strokec6 ,\strokec4  hex_balance\strokec6 ,\strokec4 STAKE_LENGTH\strokec6 );\cb1 \strokec4 \
+\cb3         hex_token\strokec6 .\strokec4 transfer\strokec6 (\strokec4 TEAM_CONTRACT_ADDRESS\strokec6 ,\strokec4  bpb_bonus_sharing_amount\strokec6 );\cb1 \strokec4 \
+\cb3         hedron_token\strokec6 .\strokec4 transfer\strokec6 (\strokec4 TEAM_CONTRACT_ADDRESS\strokec6 ,\strokec4 hedron_contract\strokec6 .\strokec4 balanceOf\strokec6 (\cf5 \strokec5 address\cf4 \strokec6 (\cf13 \strokec13 this\cf4 \strokec6 )));\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  total_maxi_supply \strokec6 =\strokec4  IERC20\strokec6 (\cf5 \strokec5 address\cf4 \strokec6 (\cf13 \strokec13 this\cf4 \strokec6 )).\strokec4 totalSupply\strokec6 ();\cb1 \strokec4 \
+\cb3         \cb1 \
+\
+\cb3         \cb1 \
+\cb3         HEX_REDEMPTION_RATE  \strokec6 =\strokec4  calculate_redemption_rate\strokec6 (\strokec4 hex_balance\strokec6 ,\strokec4  total_maxi_supply\strokec6 );\cb1 \strokec4 \
+\cb3         \cb1 \
+\cb3         END_STAKER\strokec6 =\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ;\cb1 \strokec4 \
+\cb3         CURRENT_STAKE_PRINCIPAL\strokec6 =\cf7 \strokec7 0\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3         STAKE_IS_ACTIVE\strokec6 =\cf5 \strokec5 false\cf4 \strokec6 ;\cb1 \strokec4 \
+\
+\cb3         HAS_STAKE_STARTED\strokec6 =\cf5 \strokec5 false\cf4 \strokec6 ;\cf2 \strokec2 //reset the stake\cf4 \cb1 \strokec4 \
+\cb3         MINTING_PHASE_START\strokec6 =\strokec4 hex_token\strokec6 .\strokec4 currentDay\strokec6 ();\cb1 \strokec4 \
+\cb3         MINTING_PHASE_END\strokec6 =\strokec4 MINTING_PHASE_START\strokec6 +\strokec4 MINT_DURATION\strokec6 ;\cb1 \strokec4 \
+\cb3         CURRENT_PERIOD \strokec6 =\strokec4  CURRENT_PERIOD\strokec6 +\cf7 \strokec7 1\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3         \cb1 \
+\
+\cb3         \cb1 \
+\cb3         \cb1 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 function\cf4 \strokec4  get_bonus_sharing_amount\strokec6 (\cf5 \strokec5 uint256\cf4 \strokec4  principal\strokec6 ,\cf5 \strokec5 uint256\cf4 \strokec4  end_value\strokec6 ,\strokec4  \cf5 \strokec5 uint256\cf4 \strokec4  stake_length\strokec6 )\strokec4  \cf9 \strokec9 private\cf4 \strokec4  \cf10 \strokec10 returns\cf4 \strokec6 (\cf5 \strokec5 uint256\cf4 \strokec6 )\strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         \cb1 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  bpb_effective_hex\strokec6 ;\cb1 \strokec4 \
+\cb3         \cb1 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  bpb_threshold \strokec6 =\strokec4  \cf7 \strokec7 150000000\cf4 \strokec6 *(\cf7 \strokec7 10\cf4 \strokec4 **\cf7 \strokec7 8\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         \cf17 \strokec17 if\cf4 \strokec4  \strokec6 (\strokec4 principal\strokec6 >\strokec4 bpb_threshold\strokec6 )\strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3             bpb_effective_hex \strokec6 =\strokec4  bpb_threshold\strokec6 /\cf7 \strokec7 10\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3         \strokec6 \}\cb1 \strokec4 \
+\cb3         \cf17 \strokec17 else\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3             \cf5 \strokec5 uint256\cf4 \strokec4  scaled_bpb_multiplier \strokec6 =\strokec4  \strokec6 (((\cf7 \strokec7 10\cf4 \strokec4 **\cf7 \strokec7 8\cf4 \strokec6 )*(\strokec4 principal\strokec6 ))/(\cf7 \strokec7 10\cf4 \strokec6 *\strokec4 bpb_threshold\strokec6 ));\cb1 \strokec4 \
+\cb3             bpb_effective_hex \strokec6 =\strokec4  principal \strokec6 *\strokec4  \strokec6 (\strokec4 scaled_bpb_multiplier\strokec6 )/(\cf7 \strokec7 10\cf4 \strokec4 **\cf7 \strokec7 8\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         \strokec6 \}\strokec4    \cb1 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  lpb_effective_hex\strokec6 ;\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  scaled_lpb_multiplier\strokec6 ;\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  lpb_threshold \strokec6 =\strokec4  \cf7 \strokec7 3650\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3         \cf17 \strokec17 if\cf4 \strokec4  \strokec6 (\strokec4 stake_length\strokec6 >\strokec4 lpb_threshold\strokec6 )\strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3             scaled_lpb_multiplier \strokec6 =\strokec4  \cf7 \strokec7 2\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3         \strokec6 \}\cb1 \strokec4 \
+\cb3         \cf17 \strokec17 else\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3             scaled_lpb_multiplier \strokec6 =\strokec4  \cf7 \strokec7 2\cf4 \strokec6 *((\cf7 \strokec7 10\cf4 \strokec4 **\cf7 \strokec7 8\cf4 \strokec6 )*(\strokec4 stake_length\strokec6 ))/\strokec4 lpb_threshold\strokec6 ;\cb1 \strokec4 \
+\cb3             \cb1 \
+\cb3         \strokec6 \}\strokec4    \cb1 \
+\cb3         lpb_effective_hex \strokec6 =\strokec4  principal \strokec6 *\strokec4  \strokec6 (\strokec4 scaled_lpb_multiplier\strokec6 )/(\cf7 \strokec7 10\cf4 \strokec4 **\cf7 \strokec7 8\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  scalar \strokec6 =\strokec4  \cf7 \strokec7 10\cf4 \strokec4 **\cf7 \strokec7 8\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  earnings \strokec6 =\strokec4  end_value\strokec6 -\strokec4 principal\strokec6 ;\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  bpb_makeup_scaled \strokec6 =\strokec4  \strokec6 (\strokec4 scalar \strokec6 *\strokec4  bpb_effective_hex\strokec6 )/(\strokec4 bpb_effective_hex\strokec6 +\strokec4 principal\strokec6 +\strokec4 lpb_effective_hex\strokec6 );\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  bpb_earnings_scaled \strokec6 =\strokec4  earnings \strokec6 *\strokec4 bpb_makeup_scaled\strokec6 ;\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  bpb_earnings \strokec6 =\strokec4  bpb_earnings_scaled\strokec6 /\strokec4 scalar\strokec6 ;\cb1 \strokec4 \
+\cb3         \cf10 \strokec10 return\cf4 \strokec4  bpb_earnings\strokec6 /\cf7 \strokec7 2\cf4 \strokec6 ;\cb1 \strokec4 \
+\
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3     \cf2 \strokec2 /**\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2      * @dev Calculates the pro-rata redemption rate of any coin per maxi. Scales value by 10^8 to handle integer rounding.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      * @param treasury_balance The balance of coins in the maximus contract address (either HEX or HEDRON)\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      * @param maxi_supply total maxi supply\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      * @return redemption_rate Number of units redeemable per 10^8 decimal units of MAXI. Is scaled back down by 10^8 on redemption transaction.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      */\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3     \cf5 \strokec5 function\cf4 \strokec4  calculate_redemption_rate\strokec6 (\cf5 \strokec5 uint\cf4 \strokec4  treasury_balance\strokec6 ,\strokec4  \cf5 \strokec5 uint\cf4 \strokec4  maxi_supply\strokec6 )\strokec4  \cf9 \strokec9 private\cf4 \strokec4  \cf9 \strokec9 view\cf4 \strokec4  \cf10 \strokec10 returns\cf4 \strokec4  \strokec6 (\cf5 \strokec5 uint\cf4 \strokec4  redemption_rate\strokec6 )\strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  scalar \strokec6 =\strokec4  \cf7 \strokec7 10\cf4 \strokec4 **\cf7 \strokec7 8\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  scaled \strokec6 =\strokec4  \strokec6 (\strokec4 treasury_balance \strokec6 *\strokec4  scalar\strokec6 )\strokec4  \strokec6 /\strokec4  maxi_supply\strokec6 ;\strokec4  \cf2 \strokec2 // scale value to calculate redemption amount per maxi and then divide by same scalar after multiplication\cf4 \cb1 \strokec4 \
+\cb3         \cf10 \strokec10 return\cf4 \strokec4  scaled\strokec6 ;\cb1 \strokec4 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3     \cb1 \
+\cb3     \cf2 \strokec2 /**\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2      * @dev Public function which calls the private function which is used for minting available HDRN accumulated by the contract stake. \cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      * @notice This will trigger the minting of the mintable Hedron earned by the stake. If you run this, you will pay the gas on behalf of the contract and you should not expect reimbursement. If check to make sure this has not been run yet already or the transaction will fail.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      * @param stakeIndex index of stake found in stakeLists[contract_address] in hex contract.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      * @param stakeId stake identifier found in stakeLists[contract_address] in hex contract.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      */\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3   \cf5 \strokec5 function\cf4 \strokec4  mintHedron\strokec6 (\cf5 \strokec5 uint256\cf4 \strokec4  stakeIndex\strokec6 ,\cf5 \strokec5 uint40\cf4 \strokec4  stakeId \strokec6 )\strokec4  \cf9 \strokec9 external\cf4 \strokec4   \strokec6 \{\cb1 \strokec4 \
+\cb3       _mintHedron\strokec6 (\strokec4 stakeIndex\strokec6 ,\strokec4  stakeId\strokec6 );\cb1 \strokec4 \
+\cb3         \strokec6 \}\cb1 \strokec4 \
+\cb3    \cf2 \strokec2 /**\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2      * @dev Private function used for minting available HDRN accumulated by the contract stake and updating the HDRON redemption rate.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      * @param stakeIndex index of stake found in stakeLists[contract_address] in hex contract.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      * @param stakeId stake identifier found in stakeLists[contract_address] in hex contract.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      */\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3   \cf5 \strokec5 function\cf4 \strokec4  _mintHedron\strokec6 (\cf5 \strokec5 uint256\cf4 \strokec4  stakeIndex\strokec6 ,\cf5 \strokec5 uint40\cf4 \strokec4  stakeId \strokec6 )\strokec4  \cf9 \strokec9 private\cf4 \strokec4   \strokec6 \{\cb1 \strokec4 \
+\cb3         hedron_token\strokec6 .\strokec4 mintNative\strokec6 (\strokec4 stakeIndex\strokec6 ,\strokec4  stakeId\strokec6 );\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  total_hedron\strokec6 =\strokec4  hedron_contract\strokec6 .\strokec4 balanceOf\strokec6 (\cf5 \strokec5 address\cf4 \strokec6 (\cf13 \strokec13 this\cf4 \strokec6 ));\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  total_maxi \strokec6 =\strokec4  IERC20\strokec6 (\cf5 \strokec5 address\cf4 \strokec6 (\cf13 \strokec13 this\cf4 \strokec6 )).\strokec4 totalSupply\strokec6 ();\cb1 \strokec4 \
+\cb3         \cb1 \
+\cb3         HEDRON_REDEMPTION_RATE \strokec6 =\strokec4  calculate_redemption_rate\strokec6 (\strokec4 total_hedron\strokec6 ,\strokec4  total_maxi\strokec6 );\cb1 \strokec4 \
+\cb3         HAS_HEDRON_MINTED \strokec6 =\strokec4  \cf5 \strokec5 true\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3         \strokec6 \}\cb1 \strokec4 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3 \strokec6 \}\cb1 \strokec4 \
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 //SPDX-License-Identifier: UNLICENSED\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf5 \cb3 \strokec5 pragma\cf4 \strokec4  \cf5 \strokec5 solidity\cf4 \strokec4  \strokec6 ^\cf7 \strokec7 0.8.2\cf4 \strokec6 ;\cb1 \strokec4 \
+\cf5 \cb3 \strokec5 import\cf4 \strokec4  \cf8 \strokec8 "@openzeppelin/contracts/token/ERC20/ERC20.sol"\cf4 \strokec6 ;\cb1 \strokec4 \
+\cf5 \cb3 \strokec5 import\cf4 \strokec4  \cf8 \strokec8 "@openzeppelin/contracts/token/ERC20/IERC20.sol"\cf4 \strokec6 ;\cb1 \strokec4 \
+\cf5 \cb3 \strokec5 import\cf4 \strokec4  \cf8 \strokec8 "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol"\cf4 \strokec6 ;\cb1 \strokec4 \
+\cf5 \cb3 \strokec5 import\cf4 \strokec4  \cf8 \strokec8 "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"\cf4 \strokec6 ;\cb1 \strokec4 \
+\cf5 \cb3 \strokec5 import\cf4 \strokec4  \cf8 \strokec8 "@openzeppelin/contracts/utils/math/SafeMath.sol"\cf4 \strokec6 ;\cb1 \strokec4 \
+\cf5 \cb3 \strokec5 import\cf4 \strokec4  \cf8 \strokec8 "@openzeppelin/contracts/security/ReentrancyGuard.sol"\cf4 \strokec6 ;\cb1 \strokec4 \
+\cf5 \cb3 \strokec5 import\cf4 \strokec4  \cf8 \strokec8 "./PerpetualPool.sol"\cf4 \strokec6 ;\cb1 \strokec4 \
+\
+\
+\
+\cf5 \cb3 \strokec5 contract\cf4 \strokec4  Team \cf5 \strokec5 is\cf4 \strokec4  ERC20\strokec6 ,\strokec4  ERC20Burnable\strokec6 ,\strokec4  ReentrancyGuard \strokec6 \{\cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3     \cf5 \strokec5 event\cf4 \strokec4  Mint\strokec6 (\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 address\cf4 \strokec4  \cf17 \strokec17 indexed\cf4 \strokec4  minter\strokec6 ,\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  amount\cb1 \
+\cb3     \strokec6 );\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 event\cf4 \strokec4  Stake\strokec6 (\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 address\cf4 \strokec4  \cf17 \strokec17 indexed\cf4 \strokec4  minter\strokec6 ,\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  amount\strokec6 ,\strokec4  \cb1 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  staking_period\strokec6 ,\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 bool\cf4 \strokec4  is_roll_forward\cb1 \
+\cb3     \strokec6 );\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 address\cf4 \strokec4  \cf9 \strokec9 public\cf4 \strokec4  TEAM_ADDRESS \strokec6 =\strokec4  \cf5 \strokec5 address\cf4 \strokec6 (\cf13 \strokec13 this\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 address\cf4 \strokec4  MAXI_ADDRESS \strokec6 =\strokec4  \cf15 \strokec15 0x12aF25Df1A643F4C30c918AB1212a240f452Ef4e\cf4 \strokec6 ;\cf2 \strokec2 //0xDfF2bff8234E6eA2a66e761CA6a835cc6E96D4c4;// 0x0d86EB9f43C57f6FF3BC9E23D8F9d82503f0e84b;\cf4 \cb1 \strokec4 \
+\cb3     \cb1 \
+\cb3     \cb1 \
+\cb3     \cf5 \strokec5 address\cf4 \strokec4  \cf5 \strokec5 constant\cf4 \strokec4  HEX_ADDRESS \strokec6 =\strokec4  \cf15 \strokec15 0x2b591e99afE9f32eAA6214f7B7629768c40Eeb39\cf4 \strokec6 ;\strokec4  \cf2 \strokec2 // "2b, 5 9 1e? that is the question..."\cf4 \cb1 \strokec4 \
+\cb3     \cf5 \strokec5 address\cf4 \strokec4  \cf5 \strokec5 constant\cf4 \strokec4  HEDRON_ADDRESS\strokec6 =\cf15 \strokec15 0x3819f64f282bf135d62168C1e513280dAF905e06\cf4 \strokec6 ;\strokec4  \cb1 \
+\
+\cb3     IERC20 hex_contract \strokec6 =\strokec4  IERC20\strokec6 (\strokec4 HEX_ADDRESS\strokec6 );\strokec4   \cf2 \strokec2 //things like TransferFrom\cf4 \cb1 \strokec4 \
+\cb3     IERC20 hedron_contract\strokec6 =\strokec4 IERC20\strokec6 (\strokec4 HEDRON_ADDRESS\strokec6 );\cb1 \strokec4 \
+\cb3     HEXToken hex_token \strokec6 =\strokec4  HEXToken\strokec6 (\strokec4 HEX_ADDRESS\strokec6 );\strokec4  \cf2 \strokec2 //things like stakeStart\cf4 \cb1 \strokec4 \
+\cb3     HedronToken hedron_token \strokec6 =\strokec4  HedronToken\strokec6 (\strokec4 HEDRON_ADDRESS\strokec6 );\cb1 \strokec4 \
+\cb3     IERC20 maxi_contract \strokec6 =\strokec4  IERC20\strokec6 (\strokec4 MAXI_ADDRESS\strokec6 );\cb1 \strokec4 \
+\cb3     MAXIToken maxi_token \strokec6 =\strokec4  MAXIToken\strokec6 (\strokec4 MAXI_ADDRESS\strokec6 );\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 uint256\cf4 \strokec4  \cf9 \strokec9 public\cf4 \strokec4  MINTING_PHASE_START\strokec6 ;\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 uint256\cf4 \strokec4  \cf9 \strokec9 public\cf4 \strokec4  MINTING_PHASE_END\strokec6 ;\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 bool\cf4 \strokec4  \cf9 \strokec9 public\cf4 \strokec4  IS_MINTING_ONGOING\strokec6 ;\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 address\cf4 \strokec4  \cf9 \strokec9 public\cf4 \strokec4  ESCROW_ADDRESS\strokec6 ;\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 address\cf4 \strokec4  \cf9 \strokec9 public\cf4 \strokec4  MYSTERY_BOX_ADDRESS\strokec6 ;\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 bool\cf4 \strokec4  HAVE_POOLS_DEPLOYED\strokec6 ;\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 uint256\cf4 \strokec4  TEST_DAY\strokec6 ;\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 address\cf4 \strokec4  MYSTERY_BOX_HOT\strokec6 ;\cb1 \strokec4 \
+\
+\cb3     \cf11 \strokec11 constructor\cf4 \strokec6 ()\strokec4  ERC20\strokec6 (\cf8 \strokec8 "Maximus Team"\cf4 \strokec6 ,\strokec4  \cf8 \strokec8 "TEAM"\cf4 \strokec6 )\strokec4  ReentrancyGuard\strokec6 ()\strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         \cb1 \
+\cb3         IS_MINTING_ONGOING\strokec6 =\cf5 \strokec5 true\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  start_day\strokec6 =\strokec4 hex_token\strokec6 .\strokec4 currentDay\strokec6 ();\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  mint_duration\strokec6 =\cf7 \strokec7 14\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3         MINTING_PHASE_START \strokec6 =\strokec4  start_day\strokec6 ;\cb1 \strokec4 \
+\cb3         MINTING_PHASE_END \strokec6 =\strokec4  start_day\strokec6 +\strokec4 mint_duration\strokec6 ;\cb1 \strokec4 \
+\cb3         HAVE_POOLS_DEPLOYED \strokec6 =\strokec4  \cf5 \strokec5 false\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3         GLOBAL_TEAM_STAKED\strokec6 =\cf7 \strokec7 0\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3         deployPools\strokec6 ();\cb1 \strokec4 \
+\cb3         declareSupportedTokens\strokec6 ();\cb1 \strokec4 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\
+\
+\cb3     \cf2 \strokec2 // Pool Deployment \cf4 \cb1 \strokec4 \
+\cb3     \cf5 \strokec5 mapping\cf4 \strokec4  \strokec6 (\cf5 \strokec5 string\cf4 \strokec4  =>\cf5 \strokec5 address\cf4 \strokec6 )\strokec4  \cf9 \strokec9 public\cf4 \strokec4  poolAddresses\strokec6 ;\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 function\cf4 \strokec4  deployPools\strokec6 ()\strokec4  \cf9 \strokec9 private\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         \cf16 \strokec16 require\cf4 \strokec6 (\strokec4 HAVE_POOLS_DEPLOYED\strokec6 ==\cf5 \strokec5 false\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         deployPool\strokec6 (\cf8 \strokec8 "Maximus Base"\cf4 \strokec6 ,\strokec4  \cf8 \strokec8 "BASE"\cf4 \strokec6 ,\strokec4  \cf7 \strokec7 365\cf4 \strokec6 ,\strokec4  \cf7 \strokec7 7\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         deployPool\strokec6 (\cf8 \strokec8 "Maximus Trio"\cf4 \strokec6 ,\strokec4  \cf8 \strokec8 "TRIO"\cf4 \strokec6 ,\strokec4  \cf7 \strokec7 3\cf4 \strokec6 *\cf7 \strokec7 365\cf4 \strokec6 ,\strokec4  \cf7 \strokec7 7\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         deployPool\strokec6 (\cf8 \strokec8 "Maximus Lucky"\cf4 \strokec6 ,\strokec4  \cf8 \strokec8 "LUCKY"\cf4 \strokec6 ,\strokec4  \cf7 \strokec7 7\cf4 \strokec6 *\cf7 \strokec7 365\cf4 \strokec6 ,\strokec4  \cf7 \strokec7 7\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         deployPool\strokec6 (\cf8 \strokec8 "Maximus Decimus"\cf4 \strokec6 ,\strokec4  \cf8 \strokec8 "DECI"\cf4 \strokec6 ,\strokec4  \cf7 \strokec7 10\cf4 \strokec6 *\cf7 \strokec7 365\cf4 \strokec6 ,\strokec4  \cf7 \strokec7 7\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         HAVE_POOLS_DEPLOYED\strokec6 =\cf5 \strokec5 true\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 function\cf4 \strokec4  deployPool\strokec6 (\cf5 \strokec5 string\cf4 \strokec4  \cf12 \cb3 \strokec12 memory\cf4 \cb3 \strokec4  name\strokec6 ,\strokec4  \cf5 \strokec5 string\cf4 \strokec4  \cf12 \cb3 \strokec12 memory\cf4 \cb3 \strokec4  ticker\strokec6 ,\strokec4  \cf5 \strokec5 uint\cf4 \strokec4  stake_length\strokec6 ,\strokec4  \cf5 \strokec5 uint256\cf4 \strokec4  mint_length\strokec6 )\strokec4  \cf9 \strokec9 private\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         PerpetualPool pool \strokec6 =\strokec4  \cf5 \strokec5 new\cf4 \strokec4  PerpetualPool\strokec6 (\strokec4 mint_length\strokec6 ,\strokec4  stake_length\strokec6 ,\strokec4  \cf5 \strokec5 address\cf4 \strokec6 (\cf13 \strokec13 this\cf4 \strokec6 )\strokec4  \strokec6 ,\strokec4 name\strokec6 ,\strokec4   ticker\strokec6 );\cb1 \strokec4 \
+\cb3         poolAddresses\strokec6 [\strokec4 ticker\strokec6 ]\strokec4  \strokec6 =\cf5 \strokec5 address\cf4 \strokec6 (\strokec4 pool\strokec6 );\cb1 \strokec4 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3     \cb1 \
+\cb3     \cb1 \
+\cb3     \cb1 \
+\cb3     \cf5 \strokec5 function\cf4 \strokec4  deployMysteryBox\strokec6 ()\strokec4  \cf9 \strokec9 private\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         MysteryBox newMB \strokec6 =\strokec4  \cf5 \strokec5 new\cf4 \strokec4  MysteryBox\strokec6 (\cf5 \strokec5 address\cf4 \strokec6 (\cf13 \strokec13 this\cf4 \strokec6 ),\strokec4  MAXI_ADDRESS\strokec6 ,\strokec4  MYSTERY_BOX_HOT\strokec6 );\cb1 \strokec4 \
+\cb3         MYSTERY_BOX_ADDRESS \strokec6 =\strokec4  \cf5 \strokec5 address\cf4 \strokec6 (\strokec4 newMB\strokec6 );\cb1 \strokec4 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\
+\cb3     \cf5 \strokec5 function\cf4 \strokec4  deploy_MAXIEscrow\strokec6 ()\strokec4  \cf9 \strokec9 private\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         MAXIEscrow newEscrow \strokec6 =\strokec4  \cf5 \strokec5 new\cf4 \strokec4  MAXIEscrow\strokec6 (\cf5 \strokec5 address\cf4 \strokec6 (\cf13 \strokec13 this\cf4 \strokec6 ),\strokec4  MAXI_ADDRESS\strokec6 );\cb1 \strokec4 \
+\cb3         ESCROW_ADDRESS \strokec6 =\strokec4  \cf5 \strokec5 address\cf4 \strokec6 (\strokec4 newEscrow\strokec6 );\cb1 \strokec4 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3     \cb1 \
+\cb3     \cb1 \
+\cb3     \cf2 \strokec2 /**\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2     * @dev View number of decimal places the TEAM token is divisible to. Manually overwritten from default 18 to 8 to match that of HEX.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2     */\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3     \cf5 \strokec5 function\cf4 \strokec4  incrementTestDay\strokec6 (\cf5 \strokec5 uint256\cf4 \strokec4  d\strokec6 )\strokec4  \cf9 \strokec9 public\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         TEST_DAY \strokec6 =\strokec4  TEST_DAY \strokec6 +\strokec4  d\strokec6 ;\cb1 \strokec4 \
+\
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 function\cf4 \strokec4  decimals\strokec6 ()\strokec4  \cf9 \strokec9 public\cf4 \strokec4  \cf9 \strokec9 view\cf4 \strokec4  \cf13 \strokec13 virtual\cf4 \strokec4  \cf14 \strokec14 override\cf4 \strokec4  \cf10 \strokec10 returns\cf4 \strokec4  \strokec6 (\cf5 \strokec5 uint8\cf4 \strokec6 )\strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         \cf10 \strokec10 return\cf4 \strokec4  \cf7 \strokec7 8\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3     \cb1 \
+\cb3     \cb1 \
+\
+\
+\cb3     \cf2 \strokec2 /**\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2      * @dev Ensures that TEAM Minting Phase is ongoing and that the user has allowed the Team Contract address to spend the amount of MAXI the user intends to pledge to Maximus Team. \cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      ** Then sends the designated MAXI from the user to the Maximus Team Contract address and mints 1 TEAM per MAXI pledged.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      * @param amount of MAXI user chose to mint with, measured in mini (minimum divisible unit of MAXI 10^-8)\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      */\cf4 \cb1 \strokec4 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3     \cf5 \strokec5 function\cf4 \strokec4  mintTEAM\strokec6 (\cf5 \strokec5 uint256\cf4 \strokec4  amount\strokec6 )\strokec4  nonReentrant \cf9 \strokec9 external\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         \cf16 \strokec16 require\cf4 \strokec6 (\strokec4 IS_MINTING_ONGOING\strokec6 ==\cf5 \strokec5 true\cf4 \strokec6 ,\strokec4  \cf8 \strokec8 "Minting Phase must still be ongoing."\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         \cf16 \strokec16 require\cf4 \strokec6 (\strokec4 maxi_contract\strokec6 .\strokec4 allowance\strokec6 (\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ,\strokec4  TEAM_ADDRESS\strokec6 )>=\strokec4 amount\strokec6 ,\strokec4  \cf8 \strokec8 "Please approve contract address as allowed spender in the MAXI contract."\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         \cb1 \
+\cb3         maxi_contract\strokec6 .\strokec4 transferFrom\strokec6 (\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ,\strokec4  TEAM_ADDRESS\strokec6 ,\strokec4  amount\strokec6 );\cb1 \strokec4 \
+\cb3         mint\strokec6 (\strokec4 amount\strokec6 );\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 emit\cf4 \strokec4  Mint\strokec6 (\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ,\strokec4  amount\strokec6 );\cb1 \strokec4 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3     \cb1 \
+\cb3     \cf5 \strokec5 function\cf4 \strokec4  testcurrentDay\strokec6 ()\strokec4  \cf9 \strokec9 public\cf4 \strokec4  \cf9 \strokec9 view\cf4 \strokec4  \cf10 \strokec10 returns\cf4 \strokec6 (\cf5 \strokec5 uint256\cf4 \strokec6 )\strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         \cf10 \strokec10 return\cf4 \strokec4  TEST_DAY\strokec6 ;\cb1 \strokec4 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3     \cf2 \strokec2 /**\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2      * @dev When the minting period ends:\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      **   20% of the MAXI is burnt\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      **   30% of the MAXI is held in a trustless escrow contract to be redistributed to stakers during designated years\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      **   50% goes to the Mystery Box\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      */\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3     \cf5 \strokec5 function\cf4 \strokec4  finalizeMinting\strokec6 ()\strokec4  nonReentrant \cf9 \strokec9 external\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         \cf2 \strokec2 // KEEP!! removed for testing require(hex_token.currentDay()>MINTING_PHASE_END, "Minting Phase is still ongoing");\cf4 \cb1 \strokec4 \
+\cb3         \cf16 \strokec16 require\cf4 \strokec6 (\strokec4 testcurrentDay\strokec6 ()>\strokec4 MINTING_PHASE_END\strokec6 ,\strokec4  \cf8 \strokec8 "Minting Phase is still ongoing"\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         \cf16 \strokec16 require\cf4 \strokec6 (\strokec4 IS_MINTING_ONGOING\strokec6 ==\cf5 \strokec5 true\cf4 \strokec6 ,\strokec4  \cf8 \strokec8 "Minting Phase must still be ongoing."\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         deploy_MAXIEscrow\strokec6 ();\cb1 \strokec4 \
+\cb3         deployMysteryBox\strokec6 ();\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  total_MAXI \strokec6 =\strokec4  maxi_contract\strokec6 .\strokec4 balanceOf\strokec6 (\cf5 \strokec5 address\cf4 \strokec6 (\cf13 \strokec13 this\cf4 \strokec6 ));\strokec4  \cb1 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  burn_factor \strokec6 =\strokec4  \cf7 \strokec7 20\cf4 \strokec6 ;\strokec4  \cf2 \strokec2 // 20% of the MAXI used to mint TEAM is burnt.\cf4 \cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  rebate_factor \strokec6 =\strokec4  \cf7 \strokec7 30\cf4 \strokec6 ;\strokec4  \cf2 \strokec2 // 30% of the MAXI used to mint TEAM is redistributed to TEAM stakers during years 3, 6, and 9.\cf4 \cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  mb_factor \strokec6 =\strokec4  \cf7 \strokec7 50\cf4 \strokec6 ;\strokec4  \cf2 \strokec2 // 50% of the MAXI used to mint TEAM is allocated to the Mystery Box.\cf4 \cb1 \strokec4 \
+\cb3         maxi_token\strokec6 .\strokec4 burn\strokec6 (\strokec4 burn_factor\strokec6 *\strokec4 total_MAXI\strokec6 /\cf7 \strokec7 100\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         maxi_contract\strokec6 .\strokec4 transfer\strokec6 (\strokec4 ESCROW_ADDRESS\strokec6 ,\strokec4  rebate_factor\strokec6 *\strokec4 total_MAXI\strokec6 /\cf7 \strokec7 100\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         maxi_contract\strokec6 .\strokec4 transfer\strokec6 (\strokec4 MYSTERY_BOX_ADDRESS\strokec6 ,\strokec4  mb_factor\strokec6 *\strokec4 total_MAXI\strokec6 /\cf7 \strokec7 100\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  current_TEAM_supply \strokec6 =\strokec4  IERC20\strokec6 (\cf5 \strokec5 address\cf4 \strokec6 (\cf13 \strokec13 this\cf4 \strokec6 )).\strokec4 totalSupply\strokec6 ();\cb1 \strokec4 \
+\cb3         _mint\strokec6 (\strokec4 MYSTERY_BOX_ADDRESS\strokec6 ,\strokec4 current_TEAM_supply\strokec6 +\strokec4 GLOBAL_TEAM_STAKED\strokec6 );\cb1 \strokec4 \
+\cb3         IS_MINTING_ONGOING\strokec6 =\cf5 \strokec5 false\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2 // STAKING\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3     \cf5 \strokec5 uint256\cf4 \strokec4  \cf9 \strokec9 public\cf4 \strokec4  GLOBAL_TEAM_STAKED\strokec6 ;\strokec4  \cf2 \strokec2 // Number of TEAM Currently Staked\cf4 \cb1 \strokec4 \
+\cb3     \cf5 \strokec5 mapping\cf4 \strokec4  \strokec6 (\cf5 \strokec5 uint\cf4 \strokec4  => \cf5 \strokec5 uint256\cf4 \strokec6 )\strokec4  \cf9 \strokec9 public\cf4 \strokec4  globalPeriodEndTotal\strokec6 ;\strokec4  \cf2 \strokec2 // Number of TEAM staked during any given period. Once period ticks over to the next one, this is the number of TEAM eligible to claim rewards from that period.\cf4 \cb1 \strokec4 \
+\cb3     \cf5 \strokec5 mapping\cf4 \strokec4  \strokec6 (\cf5 \strokec5 address\cf4 \strokec4 => \cf5 \strokec5 uint256\cf4 \strokec6 )\strokec4  \cf9 \strokec9 public\cf4 \strokec4  addressAmountStakedRunningTotal\strokec6 ;\strokec4  \cf2 \strokec2 //Number of TEAM currently staked by the user\cf4 \cb1 \strokec4 \
+\cb3     \cf5 \strokec5 mapping\cf4 \strokec4  \strokec6 (\cf5 \strokec5 address\cf4 \strokec4  => \cf5 \strokec5 mapping\cf4 \strokec4  \strokec6 (\cf5 \strokec5 uint\cf4 \strokec4  =>\cf5 \strokec5 uint256\cf4 \strokec6 ))\strokec4  \cf9 \strokec9 public\cf4 \strokec4  addressPeriodEndTotal\strokec6 ;\strokec4  \cf2 \strokec2 // Number of TEAM staked during any given period by the user. Once period ticks over to the next one, this is the number of the user's TEAM that is eligible to claim rewards from that period.\cf4 \cb1 \strokec4 \
+\cb3     \cf5 \strokec5 mapping\cf4 \strokec4  \strokec6 (\cf5 \strokec5 uint\cf4 \strokec4  => \cf5 \strokec5 mapping\cf4 \strokec6 (\cf5 \strokec5 address\cf4 \strokec4 =>\cf5 \strokec5 uint256\cf4 \strokec6 ))\strokec4  \cf9 \strokec9 public\cf4 \strokec4  amountUserRollForward\strokec6 ;\strokec4  \cf2 \strokec2 // Number of TEAM rolled forward from one period to the next.\cf4 \cb1 \strokec4 \
+\cb3     \cf5 \strokec5 function\cf4 \strokec4  stakeTEAM\strokec6 (\cf5 \strokec5 uint256\cf4 \strokec4  amount\strokec6 )\strokec4  nonReentrant \cf9 \strokec9 external\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         \cf16 \strokec16 require\cf4 \strokec6 (\strokec4 balanceOf\strokec6 (\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 )>=\strokec4 amount\strokec6 ,\strokec4  \cf8 \strokec8 "Insufficient TEAM Balance."\cf4 \strokec6 );\strokec4  \cf2 \strokec2 // 1. Make sure that user has at least as much TEAM as they are trying to stake.\cf4 \cb1 \strokec4 \
+\cb3         incrememtStake\strokec6 (\strokec4 amount\strokec6 );\strokec4  \cf2 \strokec2 // 3. Record the stake\cf4 \cb1 \strokec4 \
+\cb3         burn\strokec6 (\strokec4 amount\strokec6 );\strokec4  \cf2 \strokec2 //2. Burn the staked TEAM (will be reminted when unstaked)\cf4 \cb1 \strokec4 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3     \cb1 \
+\cb3     \cf5 \strokec5 function\cf4 \strokec4  incrememtStake\strokec6 (\cf5 \strokec5 uint256\cf4 \strokec4  amount\strokec6 )\strokec4  \cf9 \strokec9 private\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  next_staking_period\strokec6 ;\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  current_period \strokec6 =\strokec4  getCurrentPeriod\strokec6 ();\cb1 \strokec4 \
+\cb3         \cf17 \strokec17 if\cf4 \strokec4  \strokec6 (\strokec4 isStakingPeriod\strokec6 ()==\cf5 \strokec5 true\cf4 \strokec6 )\strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3             next_staking_period \strokec6 =\strokec4  current_period\strokec6 +\cf7 \strokec7 2\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3         \strokec6 \}\cb1 \strokec4 \
+\cb3         \cf17 \strokec17 else\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3             next_staking_period\strokec6 =\strokec4 current_period\strokec6 +\cf7 \strokec7 1\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3         \strokec6 \}\cb1 \strokec4 \
+\cb3         \cf2 \strokec2 // Update Global Tallies\cf4 \cb1 \strokec4 \
+\cb3         GLOBAL_TEAM_STAKED \strokec6 =\strokec4  GLOBAL_TEAM_STAKED \strokec6 +\strokec4  amount\strokec6 ;\cb1 \strokec4 \
+\cb3         globalPeriodEndTotal\strokec6 [\strokec4 next_staking_period\strokec6 ]\strokec4  \strokec6 =\strokec4  amount \strokec6 +\strokec4  globalPeriodEndTotal\strokec6 [\strokec4 next_staking_period\strokec6 ];\cb1 \strokec4 \
+\cb3          \cf2 \strokec2 // 2. Update the global staked amount running total for the scheduled staking period.\cf4 \cb1 \strokec4 \
+\cb3         addressPeriodEndTotal\strokec6 [\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ][\strokec4 next_staking_period\strokec6 ]\strokec4  \strokec6 =\strokec4  amount \strokec6 +\strokec4  addressPeriodEndTotal\strokec6 [\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ][\strokec4 next_staking_period\strokec6 ];\cb1 \strokec4 \
+\cb3         addressAmountStakedRunningTotal\strokec6 [\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ]=\strokec4  addressAmountStakedRunningTotal\strokec6 [\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ]+\strokec4 amount\strokec6 ;\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 emit\cf4 \strokec4  Stake\strokec6 (\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ,\strokec4  amount\strokec6 ,\strokec4  next_staking_period\strokec6 ,\strokec4  \cf5 \strokec5 false\cf4 \strokec6 );\strokec4  \cf2 \strokec2 // Log a stake event\cf4 \cb1 \strokec4 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3      \cf5 \strokec5 function\cf4 \strokec4  removeStakeTEAM\strokec6 (\cf5 \strokec5 uint256\cf4 \strokec4  amount\strokec6 )\strokec4  nonReentrant \cf9 \strokec9 external\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         \cf2 \strokec2 // 1. Make sure that user has at least as much TEAM as they are trying to stake.\cf4 \cb1 \strokec4 \
+\cb3         \cf16 \strokec16 require\cf4 \strokec6 (\strokec4 addressAmountStakedRunningTotal\strokec6 [\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ]>=\strokec4 amount\strokec6 ,\strokec4  \cf8 \strokec8 "You do not have that much TEAM."\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         \cf2 \strokec2 // 2. Record the stake \cf4 \cb1 \strokec4 \
+\cb3         decrementStake\strokec6 (\strokec4 amount\strokec6 );\cb1 \strokec4 \
+\cb3         \cb1 \
+\cb3         \cb1 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3     \cb1 \
+\cb3     \cf5 \strokec5 function\cf4 \strokec4  decrementStake\strokec6 (\cf5 \strokec5 uint256\cf4 \strokec4  amount\strokec6 )\strokec4  \cf9 \strokec9 private\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         \cf16 \strokec16 require\cf4 \strokec6 (\strokec4 addressAmountStakedRunningTotal\strokec6 [\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ]>=\strokec4 amount\strokec6 ,\strokec4  \cf8 \strokec8 "not enough"\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  current_period \strokec6 =\strokec4  getCurrentPeriod\strokec6 ();\cb1 \strokec4 \
+\cb3         GLOBAL_TEAM_STAKED \strokec6 =\strokec4  GLOBAL_TEAM_STAKED \strokec6 -\strokec4  amount\strokec6 ;\cb1 \strokec4 \
+\cb3         \cf16 \strokec16 require\cf4 \strokec6 (\strokec4 GLOBAL_TEAM_STAKED\strokec6 >=\cf7 \strokec7 0\cf4 \strokec6 ,\strokec4  \cf8 \strokec8 "global greater zero"\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         addressAmountStakedRunningTotal\strokec6 [\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ]\strokec4  \strokec6 =\strokec4  addressAmountStakedRunningTotal\strokec6 [\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ]-\strokec4 amount\strokec6 ;\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  remintable_amount\strokec6 ;\cb1 \strokec4 \
+\cb3         \cf2 \strokec2 // if an existing stake is currently ongoing, remove from current period stake totals and apply penalty\cf4 \cb1 \strokec4 \
+\cb3         \cf17 \strokec17 if\cf4 \strokec4  \strokec6 (\strokec4 isStakingPeriod\strokec6 ()==\cf5 \strokec5 true\cf4 \strokec6 )\strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3             \cf17 \strokec17 if\cf4 \strokec4  \strokec6 (\strokec4 addressPeriodEndTotal\strokec6 [\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ][\strokec4 current_period\strokec6 ]\strokec4  \strokec6 >\cf7 \strokec7 0\cf4 \strokec6 )\strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3                 globalPeriodEndTotal\strokec6 [\strokec4 current_period\strokec6 ]\strokec4  \strokec6 =\strokec4  globalPeriodEndTotal\strokec6 [\strokec4 current_period\strokec6 ]-\strokec4 amount\strokec6 ;\cb1 \strokec4 \
+\cb3                 addressPeriodEndTotal\strokec6 [\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ][\strokec4 current_period\strokec6 ]\strokec4  \strokec6 =\strokec4  addressPeriodEndTotal\strokec6 [\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ][\strokec4 current_period\strokec6 ]\strokec4  \strokec6 -\strokec4  amount\strokec6 ;\cb1 \strokec4 \
+\cb3                 \cf5 \strokec5 uint256\cf4 \strokec4  next_period \strokec6 =\strokec4  current_period\strokec6 +\cf7 \strokec7 2\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3                 \cf17 \strokec17 if\cf4 \strokec4  \strokec6 (\strokec4 addressPeriodEndTotal\strokec6 [\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ][\strokec4 next_period\strokec6 ]>\cf7 \strokec7 0\cf4 \strokec6 )\{\cb1 \strokec4 \
+\cb3                     globalPeriodEndTotal\strokec6 [\strokec4 next_period\strokec6 ]\strokec4  \strokec6 =\strokec4  globalPeriodEndTotal\strokec6 [\strokec4 next_period\strokec6 ]-\strokec4 amount\strokec6 ;\cb1 \strokec4 \
+\cb3                     addressPeriodEndTotal\strokec6 [\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ][\strokec4 next_period\strokec6 ]\strokec4  \strokec6 =\strokec4  addressPeriodEndTotal\strokec6 [\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ][\strokec4 next_period\strokec6 ]\strokec4  \strokec6 -\strokec4  amount\strokec6 ;\cb1 \strokec4 \
+\cb3                 \strokec6 \}\cb1 \strokec4 \
+\cb3                 \cf5 \strokec5 uint256\cf4 \strokec4  scaled_penalty \strokec6 =\strokec4  \strokec6 (\cf7 \strokec7 10\cf4 \strokec4 **\cf7 \strokec7 6\cf4 \strokec6 )*(\cf7 \strokec7 369\cf4 \strokec6 )*\strokec4 amount\strokec6 ;\strokec4  \cf2 \strokec2 //unscale by dividing by 10**8\cf4 \cb1 \strokec4 \
+\cb3                 \cf5 \strokec5 uint256\cf4 \strokec4  penalty \strokec6 =\strokec4  scaled_penalty\strokec6 /(\cf7 \strokec7 10\cf4 \strokec4 **\cf7 \strokec7 8\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3                 remintable_amount \strokec6 =\strokec4  amount \strokec6 -\strokec4  penalty\strokec6 ;\cb1 \strokec4 \
+\cb3             \strokec6 \}\cb1 \strokec4 \
+\cb3             \cf17 \strokec17 else\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3                 remintable_amount \strokec6 =\strokec4  amount\strokec6 ;\cb1 \strokec4 \
+\cb3             \strokec6 \}\cb1 \strokec4 \
+\
+\cb3         \strokec6 \}\cb1 \strokec4 \
+\cb3         \cf17 \strokec17 else\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3             \cf5 \strokec5 uint256\cf4 \strokec4  latest_staking_period \strokec6 =\strokec4  current_period\strokec6 -\cf7 \strokec7 1\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3             \cf5 \strokec5 uint256\cf4 \strokec4  next_period \strokec6 =\strokec4  current_period\strokec6 +\cf7 \strokec7 1\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3             \cf5 \strokec5 uint256\cf4 \strokec4  penalty\strokec6 =\cf7 \strokec7 0\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3             \cf17 \strokec17 if\cf4 \strokec4  \strokec6 (\strokec4 addressPeriodEndTotal\strokec6 [\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ][\strokec4 next_period\strokec6 ]>\cf7 \strokec7 0\cf4 \strokec6 )\{\cb1 \strokec4 \
+\cb3                 globalPeriodEndTotal\strokec6 [\strokec4 next_period\strokec6 ]\strokec4  \strokec6 =\strokec4  globalPeriodEndTotal\strokec6 [\strokec4 next_period\strokec6 ]-\strokec4 amount\strokec6 ;\cb1 \strokec4 \
+\cb3                 addressPeriodEndTotal\strokec6 [\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ][\strokec4 next_period\strokec6 ]\strokec4  \strokec6 =\strokec4  addressPeriodEndTotal\strokec6 [\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ][\strokec4 next_period\strokec6 ]\strokec4  \strokec6 -\strokec4  amount\strokec6 ;\cb1 \strokec4 \
+\cb3                 \cf5 \strokec5 uint256\cf4 \strokec4  scaled_penalty \strokec6 =\strokec4  \strokec6 (\cf7 \strokec7 10\cf4 \strokec4 **\cf7 \strokec7 6\cf4 \strokec6 )*(\cf7 \strokec7 369\cf4 \strokec6 )*\strokec4 amount\strokec6 ;\strokec4  \cf2 \strokec2 //unscale by dividing by 10**8\cf4 \cb1 \strokec4 \
+\cb3                 penalty \strokec6 =\strokec4  scaled_penalty\strokec6 /(\cf7 \strokec7 10\cf4 \strokec4 **\cf7 \strokec7 8\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3             \strokec6 \}\cb1 \strokec4 \
+\cb3             remintable_amount \strokec6 =\strokec4  amount \strokec6 -\strokec4  penalty\strokec6 ;\cb1 \strokec4 \
+\cb3         \strokec6 \}\cb1 \strokec4 \
+\cb3         mint\strokec6 (\strokec4 remintable_amount\strokec6 );\cb1 \strokec4 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\
+\cb3     \cf5 \strokec5 function\cf4 \strokec4  rollForwardStakedTEAM\strokec6 (\cf5 \strokec5 uint256\cf4 \strokec4  amount\strokec6 )\strokec4  \cf9 \strokec9 public\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  current_period \strokec6 =\strokec4  getCurrentPeriod\strokec6 ();\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 bool\cf4 \strokec4  is_staking_period \strokec6 =\strokec4  isStakingPeriod\strokec6 ();\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  latest_staking_period\strokec6 ;\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  next_staking_period\strokec6 ;\cb1 \strokec4 \
+\cb3         \cf17 \strokec17 if\cf4 \strokec4  \strokec6 (\strokec4 is_staking_period\strokec6 )\strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3             next_staking_period \strokec6 =\strokec4  current_period\strokec6 +\cf7 \strokec7 2\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3             latest_staking_period \strokec6 =\strokec4  current_period\strokec6 ;\cb1 \strokec4 \
+\cb3         \strokec6 \}\cb1 \strokec4 \
+\cb3         \cf17 \strokec17 else\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3             next_staking_period\strokec6 =\strokec4 current_period\strokec6 +\cf7 \strokec7 1\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3             latest_staking_period \strokec6 =\strokec4  current_period\strokec6 -\cf7 \strokec7 1\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3         \strokec6 \}\cb1 \strokec4 \
+\cb3         \cf16 \strokec16 require\cf4 \strokec6 ((\strokec4 addressPeriodEndTotal\strokec6 [\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ][\strokec4 latest_staking_period\strokec6 ]\strokec4  \strokec6 -\strokec4  amountUserRollForward\strokec6 [\strokec4 latest_staking_period\strokec6 -\cf7 \strokec7 1\cf4 \strokec6 ][\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ])\strokec4  \strokec6 >=\strokec4 amount\strokec6 );\cb1 \strokec4 \
+\cb3         globalPeriodEndTotal\strokec6 [\strokec4 next_staking_period\strokec6 ]\strokec4  \strokec6 =\strokec4  amount \strokec6 +\strokec4  globalPeriodEndTotal\strokec6 [\strokec4 next_staking_period\strokec6 ];\cb1 \strokec4 \
+\cb3         addressPeriodEndTotal\strokec6 [\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ][\strokec4 next_staking_period\strokec6 ]\strokec4  \strokec6 =\strokec4  amount \strokec6 +\strokec4  addressPeriodEndTotal\strokec6 [\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ][\strokec4 next_staking_period\strokec6 ];\cb1 \strokec4 \
+\cb3         amountUserRollForward\strokec6 [\strokec4 latest_staking_period\strokec6 ][\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ]\strokec4  \strokec6 =\strokec4  amountUserRollForward\strokec6 [\strokec4 latest_staking_period\strokec6 ][\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ]\strokec4  \strokec6 +\strokec4  amount\strokec6 ;\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 emit\cf4 \strokec4  Stake\strokec6 (\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ,\strokec4  amount\strokec6 ,\strokec4  next_staking_period\strokec6 ,\strokec4  \cf5 \strokec5 true\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         \cb1 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3     \cb1 \
+\
+\cb3     \cf5 \strokec5 function\cf4 \strokec4  isStakingPeriod\strokec6 ()\strokec4  \cf9 \strokec9 public\cf4 \strokec4  \cf9 \strokec9 view\cf4 \strokec4  \cf10 \strokec10 returns\cf4 \strokec4  \strokec6 (\cf5 \strokec5 bool\cf4 \strokec6 )\strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint\cf4 \strokec4  remainder \strokec6 =\strokec4  getCurrentPeriod\strokec6 ()%\cf7 \strokec7 2\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3         \cf17 \strokec17 if\cf4 \strokec6 (\strokec4 remainder\strokec6 ==\cf7 \strokec7 0\cf4 \strokec6 )\{\cb1 \strokec4 \
+\cb3             \cf10 \strokec10 return\cf4 \strokec4  \cf5 \strokec5 false\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3         \strokec6 \}\cb1 \strokec4 \
+\cb3         \cf17 \strokec17 else\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3             \cf10 \strokec10 return\cf4 \strokec4  \cf5 \strokec5 true\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3         \strokec6 \}\cb1 \strokec4 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 function\cf4 \strokec4  getCurrentPeriod\strokec6 ()\strokec4  \cf9 \strokec9 public\cf4 \strokec4  \cf9 \strokec9 view\cf4 \strokec4  \cf10 \strokec10 returns\cf4 \strokec4  \strokec6 (\cf5 \strokec5 uint\cf4 \strokec4  current_period\strokec6 )\{\cb1 \strokec4 \
+\cb3         \cf10 \strokec10 return\cf4 \strokec4  PerpetualPool\strokec6 (\strokec4 poolAddresses\strokec6 [\cf8 \strokec8 "BASE"\cf4 \strokec6 ]).\strokec4 getCurrentPeriod\strokec6 ();\cb1 \strokec4 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3     \cb1 \
+\cb3     \cb1 \
+\cb3         \cb1 \
+\cb3         \cb1 \
+\cb3     \cb1 \
+\cb3     \cf5 \strokec5 function\cf4 \strokec4  claim\strokec6 (\cf5 \strokec5 uint256\cf4 \strokec4  period\strokec6 ,\strokec4  \cf5 \strokec5 string\cf4 \strokec4  \cf12 \cb3 \strokec12 memory\cf4 \cb3 \strokec4  ticker\strokec6 )\strokec4  nonReentrant \cf9 \strokec9 external\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         \cf2 \strokec2 // 1. \cf4 \cb1 \strokec4 \
+\cb3         \cf2 \strokec2 //require(period!=claimed_period)\cf4 \cb1 \strokec4 \
+\cb3         \cf2 \strokec2 //1. measure how much can be redeemed for each redeemable coin\cf4 \cb1 \strokec4 \
+\cb3         \cf2 \strokec2 // - look at the redemption rates for each coin times the amount of team they staked during period\cf4 \cb1 \strokec4 \
+\cb3         \cf2 \strokec2 // transfer(msg.sender, amount) -- for each coin\cf4 \cb1 \strokec4 \
+\cb3         \cf2 \strokec2 // indicate to the contract which periods have been redeemed\cf4 \cb1 \strokec4 \
+\cb3         \cf16 \strokec16 require\cf4 \strokec6 (\strokec4 getCurrentPeriod\strokec6 ()>\strokec4 period\strokec6 );\cb1 \strokec4 \
+\cb3         \cf16 \strokec16 require\cf4 \strokec6 (\strokec4 didUserClaim\strokec6 [\strokec4 ticker\strokec6 ][\strokec4 period\strokec6 ][\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ]==\cf5 \strokec5 false\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  total_amount_succesfully_staked \strokec6 =\strokec4  globalPeriodEndTotal\strokec6 [\strokec4 period\strokec6 ];\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  scaled_percent_user \strokec6 =\strokec4  addressPeriodEndTotal\strokec6 [\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ][\strokec4 period\strokec6 ]\strokec4  \strokec6 *(\cf7 \strokec7 10\cf4 \strokec4 **\cf7 \strokec7 8\cf4 \strokec6 )\strokec4  \strokec6 /\strokec4  total_amount_succesfully_staked\strokec6 ;\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  redeemable_amount \strokec6 =\strokec4  scaled_percent_user \strokec6 *\strokec4  \strokec6 (\strokec4 periodEndBalance\strokec6 [\strokec4 ticker\strokec6 ][\strokec4 period\strokec6 ]\strokec4  \strokec6 +\strokec4 periodAmountClaimed\strokec6 [\strokec4 ticker\strokec6 ][\strokec4 period\strokec6 ]\strokec4  \strokec6 -\strokec4  periodStartBalance\strokec6 [\strokec4 ticker\strokec6 ][\strokec4 period\strokec6 ])\strokec4  \strokec6 /\strokec4  \strokec6 (\cf7 \strokec7 10\cf4 \strokec4 **\cf7 \strokec7 8\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         IERC20\strokec6 (\strokec4 poolAddresses\strokec6 [\strokec4 ticker\strokec6 ]).\strokec4 transfer\strokec6 (\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ,\strokec4  redeemable_amount\strokec6 );\cb1 \strokec4 \
+\cb3         didUserClaim\strokec6 [\strokec4 ticker\strokec6 ][\strokec4 period\strokec6 ][\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ]\strokec4  \strokec6 =\strokec4  \cf5 \strokec5 true\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 mapping\cf4 \strokec4  \strokec6 (\cf5 \strokec5 string\cf4 \strokec4  => \cf5 \strokec5 mapping\cf4 \strokec4  \strokec6 (\cf5 \strokec5 uint\cf4 \strokec4  => \cf5 \strokec5 uint256\cf4 \strokec6 ))\strokec4  \cf9 \strokec9 public\cf4 \strokec4  periodStartBalance\strokec6 ;\strokec4  \cf2 \strokec2 // uint256 hex_balance = periodStartBalance["HEX"][period]\cf4 \cb1 \strokec4 \
+\cb3     \cf5 \strokec5 mapping\cf4 \strokec4  \strokec6 (\cf5 \strokec5 string\cf4 \strokec4  => \cf5 \strokec5 mapping\cf4 \strokec4  \strokec6 (\cf5 \strokec5 uint\cf4 \strokec4  => \cf5 \strokec5 bool\cf4 \strokec6 ))\strokec4  \cf9 \strokec9 public\cf4 \strokec4  didRecordPeriodStartBalance\strokec6 ;\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 mapping\cf4 \strokec4  \strokec6 (\cf5 \strokec5 string\cf4 \strokec4  =>\cf5 \strokec5 mapping\cf4 \strokec4  \strokec6 (\cf5 \strokec5 uint\cf4 \strokec4  => \cf5 \strokec5 uint256\cf4 \strokec6 ))\strokec4  \cf9 \strokec9 public\cf4 \strokec4  periodEndBalance\strokec6 ;\strokec4  \cb1 \
+\cb3     \cf5 \strokec5 mapping\cf4 \strokec4  \strokec6 (\cf5 \strokec5 string\cf4 \strokec4  =>\cf5 \strokec5 mapping\cf4 \strokec4  \strokec6 (\cf5 \strokec5 uint\cf4 \strokec4  => \cf5 \strokec5 uint256\cf4 \strokec6 ))\strokec4  \cf9 \strokec9 public\cf4 \strokec4  periodAmountClaimed\strokec6 ;\strokec4  \cb1 \
+\cb3     \cf5 \strokec5 mapping\cf4 \strokec6 (\cf5 \strokec5 string\cf4 \strokec4  => \cf5 \strokec5 mapping\cf4 \strokec4  \strokec6 (\cf5 \strokec5 uint\cf4 \strokec4  => \cf5 \strokec5 mapping\cf4 \strokec6 (\cf5 \strokec5 address\cf4 \strokec4 =>\cf5 \strokec5 bool\cf4 \strokec6 )))\strokec4  \cf9 \strokec9 public\cf4 \strokec4  didUserClaim\strokec6 ;\cb1 \strokec4 \
+\
+\
+\cb3     \cf5 \strokec5 function\cf4 \strokec4  recordPeriodStartBalance\strokec6 (\cf5 \strokec5 string\cf4 \strokec4  \cf12 \cb3 \strokec12 memory\cf4 \cb3 \strokec4  ticker\strokec6 )\strokec4  \cf9 \strokec9 public\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         \cf16 \strokec16 require\cf4 \strokec6 (\strokec4 didRecordPeriodStartBalance\strokec6 [\strokec4 ticker\strokec6 ][\strokec4 getCurrentPeriod\strokec6 ()]==\cf5 \strokec5 false\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         periodStartBalance\strokec6 [\strokec4 ticker\strokec6 ][\strokec4 getCurrentPeriod\strokec6 ()]\strokec4  \strokec6 =\strokec4  IERC20\strokec6 (\strokec4 supportedTokens\strokec6 [\strokec4 ticker\strokec6 ]).\strokec4 balanceOf\strokec6 (\cf5 \strokec5 address\cf4 \strokec6 (\cf13 \strokec13 this\cf4 \strokec6 ));\cb1 \strokec4 \
+\cb3         didRecordPeriodStartBalance\strokec6 [\strokec4 ticker\strokec6 ][\strokec4 getCurrentPeriod\strokec6 ()]=\cf5 \strokec5 true\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3         periodEndBalance\strokec6 [\strokec4 ticker\strokec6 ][\strokec4 getCurrentPeriod\strokec6 ()-\cf7 \strokec7 1\cf4 \strokec6 ]\strokec4  \strokec6 =\strokec4  IERC20\strokec6 (\strokec4 supportedTokens\strokec6 [\strokec4 ticker\strokec6 ]).\strokec4 balanceOf\strokec6 (\cf5 \strokec5 address\cf4 \strokec6 (\cf13 \strokec13 this\cf4 \strokec6 ));\cb1 \strokec4 \
+\
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 mapping\cf4 \strokec4  \strokec6 (\cf5 \strokec5 string\cf4 \strokec4  => \cf5 \strokec5 address\cf4 \strokec6 )\strokec4  \cf9 \strokec9 public\cf4 \strokec4  supportedTokens\strokec6 ;\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 string\cf4 \strokec6 []\strokec4  supportedTokenTickers \strokec6 =\strokec4  \strokec6 [\cf8 \strokec8 "HEX"\cf4 \strokec6 ,\strokec4  \cf8 \strokec8 "MAXI"\cf4 \strokec6 ,\strokec4  \cf8 \strokec8 "HDRN"\cf4 \strokec6 ,\strokec4  \cf8 \strokec8 "BASE"\cf4 \strokec6 ,\strokec4  \cf8 \strokec8 "TRIO"\cf4 \strokec6 ,\strokec4  \cf8 \strokec8 "LUCKY"\cf4 \strokec6 ,\strokec4  \cf8 \strokec8 "DECI"\cf4 \strokec6 ];\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 function\cf4 \strokec4  declareSupportedTokens\strokec6 ()\strokec4  \cf9 \strokec9 public\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         supportedTokens\strokec6 [\cf8 \strokec8 "HEX"\cf4 \strokec6 ]\strokec4  \strokec6 =\strokec4  HEX_ADDRESS\strokec6 ;\cb1 \strokec4 \
+\cb3         supportedTokens\strokec6 [\cf8 \strokec8 "MAXI"\cf4 \strokec6 ]=\strokec4 MAXI_ADDRESS\strokec6 ;\cb1 \strokec4 \
+\cb3         supportedTokens\strokec6 [\cf8 \strokec8 "HDRN"\cf4 \strokec6 ]=\strokec4 HEDRON_ADDRESS\strokec6 ;\cb1 \strokec4 \
+\cb3         supportedTokens\strokec6 [\cf8 \strokec8 "BASE"\cf4 \strokec6 ]=\strokec4 poolAddresses\strokec6 [\cf8 \strokec8 "BASE"\cf4 \strokec6 ];\cb1 \strokec4 \
+\cb3         supportedTokens\strokec6 [\cf8 \strokec8 "TRIO"\cf4 \strokec6 ]=\strokec4 poolAddresses\strokec6 [\cf8 \strokec8 "TRIO"\cf4 \strokec6 ];\cb1 \strokec4 \
+\cb3         supportedTokens\strokec6 [\cf8 \strokec8 "LUCKY"\cf4 \strokec6 ]=\strokec4 poolAddresses\strokec6 [\cf8 \strokec8 "LUCKY"\cf4 \strokec6 ];\cb1 \strokec4 \
+\cb3         supportedTokens\strokec6 [\cf8 \strokec8 "DECI"\cf4 \strokec6 ]=\strokec4 poolAddresses\strokec6 [\cf8 \strokec8 "DECI"\cf4 \strokec6 ];\cb1 \strokec4 \
+\
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3     \cb1 \
+\cb3     \cb1 \
+\
+\cb3     \cf5 \strokec5 function\cf4 \strokec4  recordBalances\strokec6 ()\strokec4  \cf9 \strokec9 public\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         \cf18 \cb3 \strokec18 for\cf4 \cb3 \strokec4  \strokec6 (\cf5 \strokec5 uint\cf4 \strokec4  i\strokec6 =\cf7 \strokec7 0\cf4 \strokec6 ;\strokec4  i \strokec6 <\strokec4  supportedTokenTickers\strokec6 .\strokec4 length\strokec6 ;\strokec4  i\strokec6 ++)\strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3             recordPeriodStartBalance\strokec6 (\strokec4 supportedTokenTickers\strokec6 [\strokec4 i\strokec6 ]);\cb1 \strokec4 \
+\cb3         \strokec6 \}\cb1 \strokec4 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3     \cb1 \
+\cb3     \cb1 \
+\cb3     \cb1 \
+\cb3     \cb1 \
+\
+\cb3     \cf2 \strokec2 /**\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2     * @dev Returns the current HEX day."\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2     * @return Current HEX Day\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2     */\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3     \cf5 \strokec5 function\cf4 \strokec4  getHexDay\strokec6 ()\strokec4  \cf9 \strokec9 external\cf4 \strokec4  \cf9 \strokec9 view\cf4 \strokec4  \cf10 \strokec10 returns\cf4 \strokec4  \strokec6 (\cf5 \strokec5 uint256\cf4 \strokec6 )\{\cb1 \strokec4 \
+\cb3         \cf5 \strokec5 uint256\cf4 \strokec4  day \strokec6 =\strokec4  hex_token\strokec6 .\strokec4 currentDay\strokec6 ();\cb1 \strokec4 \
+\cb3         \cf10 \strokec10 return\cf4 \strokec4  day\strokec6 ;\cb1 \strokec4 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3     \cb1 \
+\cb3      \cb1 \
+\
+\cb3     \cf2 \strokec2 // MAXI Issuance and Redemption Functions\cf4 \cb1 \strokec4 \
+\cb3     \cf2 \strokec2 /**\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2      * @dev Mints MAXI.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      * @param amount of MAXI to mint, measured in minis\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      */\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3     \cf5 \strokec5 function\cf4 \strokec4  mint\strokec6 (\cf5 \strokec5 uint256\cf4 \strokec4  amount\strokec6 )\strokec4  \cf9 \strokec9 private\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         _mint\strokec6 (\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ,\strokec4  amount\strokec6 );\cb1 \strokec4 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3      \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3 \strokec6 \}\cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf5 \cb3 \strokec5 contract\cf4 \strokec4  MAXIToken \strokec6 \{\cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3   \cf5 \strokec5 function\cf4 \strokec4  approve\strokec6 (\cf5 \strokec5 address\cf4 \strokec4  spender\strokec6 ,\strokec4  \cf5 \strokec5 uint256\cf4 \strokec4  amount\strokec6 )\strokec4  \cf9 \strokec9 external\cf4 \strokec4  \cf10 \strokec10 returns\cf4 \strokec4  \strokec6 (\cf5 \strokec5 bool\cf4 \strokec6 )\strokec4  \strokec6 \{\}\cb1 \strokec4 \
+\cb3   \cf5 \strokec5 function\cf4 \strokec4  transfer\strokec6 (\cf5 \strokec5 address\cf4 \strokec4  recipient\strokec6 ,\strokec4  \cf5 \strokec5 uint256\cf4 \strokec4  amount\strokec6 )\strokec4  \cf9 \strokec9 public\cf4 \strokec4  \cf10 \strokec10 returns\cf4 \strokec4  \strokec6 (\cf5 \strokec5 bool\cf4 \strokec6 )\strokec4  \strokec6 \{\}\cb1 \strokec4 \
+\cb3   \cf5 \strokec5 function\cf4 \strokec4  burn\strokec6 (\cf5 \strokec5 uint256\cf4 \strokec4  amount\strokec6 )\strokec4  \cf9 \strokec9 public\cf4 \strokec4  \strokec6 \{\}\cb1 \strokec4 \
+\cb3   \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3 \strokec6 \}\cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf5 \cb3 \strokec5 contract\cf4 \strokec4  TEAMToken \strokec6 \{\cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3     \cf5 \strokec5 function\cf4 \strokec4  getCurrentPeriod\strokec6 ()\strokec4  \cf9 \strokec9 public\cf4 \strokec4  \cf9 \strokec9 view\cf4 \strokec4  \cf10 \strokec10 returns\cf4 \strokec4  \strokec6 (\cf5 \strokec5 uint\cf4 \strokec6 )\strokec4  \strokec6 \{\}\cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3 \strokec6 \}\cb1 \strokec4 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf5 \cb3 \strokec5 contract\cf4 \strokec4  MysteryBox \cf5 \strokec5 is\cf4 \strokec4  ReentrancyGuard\strokec6 \{\cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3     \cf5 \strokec5 address\cf4 \strokec4  MAXI_ADDRESS\strokec6 ;\cb1 \strokec4 \
+\cb3     IERC20 maxi_contract\strokec6 ;\cb1 \strokec4 \
+\cb3     IERC20 team_contract\strokec6 ;\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 address\cf4 \strokec4  MYSTERY_BOX_HOT_ADDRESS\strokec6 ;\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 address\cf4 \strokec4  TEAM_ADDRESS\strokec6 ;\cb1 \strokec4 \
+\cb3     \cf11 \strokec11 constructor\cf4 \strokec6 (\cf5 \strokec5 address\cf4 \strokec4  team_address\strokec6 ,\strokec4  \cf5 \strokec5 address\cf4 \strokec4  maxi_address\strokec6 ,\strokec4  \cf5 \strokec5 address\cf4 \strokec4  mystery_box_hot_address\strokec6 )\strokec4  ReentrancyGuard\strokec6 ()\strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         TEAM_ADDRESS\strokec6 =\strokec4 team_address\strokec6 ;\cb1 \strokec4 \
+\cb3         MAXI_ADDRESS \strokec6 =\strokec4  maxi_address\strokec6 ;\cb1 \strokec4 \
+\cb3         MYSTERY_BOX_HOT_ADDRESS \strokec6 =\strokec4 mystery_box_hot_address\strokec6 ;\cb1 \strokec4 \
+\cb3         team_contract \strokec6 =\strokec4  IERC20\strokec6 (\strokec4 TEAM_ADDRESS\strokec6 );\cb1 \strokec4 \
+\cb3         maxi_contract\strokec6 =\strokec4  IERC20\strokec6 (\strokec4 MAXI_ADDRESS\strokec6 );\cb1 \strokec4 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3     \cb1 \
+\cb3     \cf2 \strokec2 /**\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2      * @dev Sends TEAM to the MYSTERY_BOX_HOT_ADDRESS\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      * ALTHOUGH ANYONE CAN RUN THSEE PUBLIC FUNCTIONS YOU ABSOLUTELY SHOULD NOT DO IT BECAUSE IT WILL COST YOU A NON-REFUNDABLE 300,000 MAXI.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      * THERE IS OBVIOUSLY NO BENEFIT FOR ANYONE TO RUN THIS EXCEPT THE STEWARD OF THE MYSTERY BOX HOT ADDRESS.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      * SERIOUSLY DON'T RUN IT, THERE ARE NO REFUNDS SO DO NOT EVEN ASK IF YOU MESS THIS UP.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      * IT IS DELIBERATELY DIFFICULT TO RUN TO PREVENT PEOPLE FROM ACCIDENTALLY RUNNING IT.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      * @param amount of MAXI SEND TO THE MYSTERY_BOX_HOT_ADDRESS\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      *@param confirmation the message you have to deliberately type and broadcast stating that you know this function costs a non refundable 300,000 MAXI to run.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2      */\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3     \cf5 \strokec5 function\cf4 \strokec4  flushTEAM\strokec6 (\cf5 \strokec5 uint256\cf4 \strokec4  amount\strokec6 ,\strokec4  \cf5 \strokec5 string\cf4 \strokec4  \cf12 \cb3 \strokec12 memory\cf4 \cb3 \strokec4  confirmation\strokec6 )\strokec4  \cf9 \strokec9 public\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         \cb1 \
+\cb3         \cf16 \strokec16 require\cf4 \strokec6 (\cf16 \strokec16 keccak256\cf4 \strokec6 (\cf16 \strokec16 bytes\cf4 \strokec6 (\strokec4 confirmation\strokec6 ))\strokec4  \strokec6 ==\strokec4  \cf16 \strokec16 keccak256\cf4 \strokec6 (\cf16 \strokec16 bytes\cf4 \strokec6 (\cf8 \strokec8 "I UNDERSTAND I WILL NOT GET THIS 300,000 MAXI BACK"\cf4 \strokec6 )));\cb1 \strokec4 \
+\cb3         maxi_contract\strokec6 .\strokec4 transferFrom\strokec6 (\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ,\strokec4  MYSTERY_BOX_HOT_ADDRESS\strokec6 ,\strokec4  \cf7 \strokec7 300000\cf4 \strokec6 *\cf7 \strokec7 10\cf4 \strokec4 **\cf7 \strokec7 8\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         team_contract\strokec6 .\strokec4 transfer\strokec6 (\strokec4 MYSTERY_BOX_HOT_ADDRESS\strokec6 ,\strokec4  amount\strokec6 );\cb1 \strokec4 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\cb3     \cf5 \strokec5 function\cf4 \strokec4  flushMAXI\strokec6 (\cf5 \strokec5 uint256\cf4 \strokec4  amount\strokec6 ,\strokec4  \cf5 \strokec5 string\cf4 \strokec4  \cf12 \cb3 \strokec12 memory\cf4 \cb3 \strokec4  confirmation\strokec6 )\strokec4  \cf9 \strokec9 public\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3         \cf16 \strokec16 require\cf4 \strokec6 (\cf16 \strokec16 keccak256\cf4 \strokec6 (\cf16 \strokec16 bytes\cf4 \strokec6 (\strokec4 confirmation\strokec6 ))\strokec4  \strokec6 ==\strokec4  \cf16 \strokec16 keccak256\cf4 \strokec6 (\cf16 \strokec16 bytes\cf4 \strokec6 (\cf8 \strokec8 "I UNDERSTAND I WILL NOT GET THIS 300,000 MAXI BACK"\cf4 \strokec6 )));\cb1 \strokec4 \
+\cb3         maxi_contract\strokec6 .\strokec4 transferFrom\strokec6 (\cf16 \strokec16 msg\cf4 \strokec6 .\strokec4 sender\strokec6 ,\strokec4  MYSTERY_BOX_HOT_ADDRESS\strokec6 ,\strokec4  \cf7 \strokec7 300000\cf4 \strokec6 *\cf7 \strokec7 10\cf4 \strokec4 **\cf7 \strokec7 8\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3         maxi_contract\strokec6 .\strokec4 transfer\strokec6 (\strokec4 MYSTERY_BOX_HOT_ADDRESS\strokec6 ,\strokec4  amount\strokec6 );\cb1 \strokec4 \
+\cb3     \strokec6 \}\cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3 \strokec6 \}\cb1 \strokec4 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf5 \cb3 \strokec5 contract\cf4 \strokec4   MAXIEscrow \cf5 \strokec5 is\cf4 \strokec4  ReentrancyGuard\strokec6 \{\cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3   \cf5 \strokec5 mapping\cf4 \strokec4  \strokec6 (\cf5 \strokec5 uint\cf4 \strokec4  => \cf5 \strokec5 uint256\cf4 \strokec6 )\strokec4  \cf9 \strokec9 public\cf4 \strokec4  rebateSchedule\strokec6 ;\cb1 \strokec4 \
+\cb3   \cf5 \strokec5 address\cf4 \strokec4  MAXI_ADDRESS\strokec6 ;\cb1 \strokec4 \
+\cb3   IERC20 maxi_contract\strokec6 ;\strokec4  \cb1 \
+\cb3   TEAMToken team_token\strokec6 ;\cb1 \strokec4 \
+\cb3   \cf5 \strokec5 address\cf4 \strokec4  TEAM_ADDRESS\strokec6 ;\cb1 \strokec4 \
+\cb3   \cf5 \strokec5 bool\cf4 \strokec4  IS_SCHEDULED\strokec6 ;\cb1 \strokec4 \
+\cb3   \cf11 \strokec11 constructor\cf4 \strokec6 (\cf5 \strokec5 address\cf4 \strokec4  team_address\strokec6 ,\strokec4  \cf5 \strokec5 address\cf4 \strokec4  maxi_address\strokec6 )\strokec4  ReentrancyGuard\strokec6 ()\{\cb1 \strokec4 \
+\cb3       TEAM_ADDRESS\strokec6 =\strokec4 team_address\strokec6 ;\cb1 \strokec4 \
+\cb3       MAXI_ADDRESS \strokec6 =\strokec4  maxi_address\strokec6 ;\cb1 \strokec4 \
+\cb3       IS_SCHEDULED\strokec6 =\cf5 \strokec5 false\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3       team_token \strokec6 =\strokec4  TEAMToken\strokec6 (\strokec4 TEAM_ADDRESS\strokec6 );\strokec4   \cb1 \
+\cb3       maxi_contract \strokec6 =\strokec4  IERC20\strokec6 (\strokec4 MAXI_ADDRESS\strokec6 );\cb1 \strokec4 \
+\cb3   \strokec6 \}\cb1 \strokec4 \
+\cb3   \cf2 \strokec2 /**\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2      * @dev Schedules the 369 MAXI Rebate by calculating amount of MAXI to send to TEAM during years 3, 6, and 9. \cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2   **/\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3   \cf5 \strokec5 function\cf4 \strokec4  scheduleRebates\strokec6 ()\strokec4  \cf9 \strokec9 public\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3       \cf16 \strokec16 require\cf4 \strokec6 (\strokec4 IS_SCHEDULED\strokec6 ==\cf5 \strokec5 false\cf4 \strokec6 ,\strokec4  \cf8 \strokec8 "Rebates have already been scheduled."\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3       \cf16 \strokec16 require\cf4 \strokec6 (\strokec4 team_token\strokec6 .\strokec4 getCurrentPeriod\strokec6 ()>\cf7 \strokec7 0\cf4 \strokec6 ,\strokec4  \cf8 \strokec8 "TEAM minting must be complete in order to schedule rebates."\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3       \cf5 \strokec5 uint256\cf4 \strokec4  total_maxi \strokec6 =\strokec4  maxi_contract\strokec6 .\strokec4 balanceOf\strokec6 (\cf5 \strokec5 address\cf4 \strokec6 (\cf13 \strokec13 this\cf4 \strokec6 ));\cb1 \strokec4 \
+\cb3       rebateSchedule\strokec6 [\cf7 \strokec7 3\cf4 \strokec6 ]\strokec4  \strokec6 =\strokec4  total_maxi \strokec6 *\strokec4  \cf7 \strokec7 3\cf4 \strokec6 /\cf7 \strokec7 18\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3       rebateSchedule\strokec6 [\cf7 \strokec7 6\cf4 \strokec6 ]\strokec4  \strokec6 =\strokec4  total_maxi \strokec6 *\strokec4  \cf7 \strokec7 6\cf4 \strokec6 /\cf7 \strokec7 18\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3       \cf5 \strokec5 uint256\cf4 \strokec4  remaining \strokec6 =\strokec4  total_maxi \strokec6 -\strokec4  \strokec6 (\strokec4 rebateSchedule\strokec6 [\cf7 \strokec7 3\cf4 \strokec6 ]+\strokec4 rebateSchedule\strokec6 [\cf7 \strokec7 6\cf4 \strokec6 ]);\cb1 \strokec4 \
+\cb3       rebateSchedule\strokec6 [\cf7 \strokec7 9\cf4 \strokec6 ]\strokec4  \strokec6 =\strokec4  remaining\strokec6 ;\cb1 \strokec4 \
+\cb3       IS_SCHEDULED\strokec6 =\cf5 \strokec5 true\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3   \strokec6 \}\cb1 \strokec4 \
+\cb3   \cf2 \strokec2 /**\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3 \strokec2      * @dev Uses current period to determine if it is year 3, 6, or 9. Then Sends the MAXI to the TEAM contract address.\cf4 \cb1 \strokec4 \
+\cf2 \cb3 \strokec2   **/\cf4 \cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3   \cf5 \strokec5 function\cf4 \strokec4  releaseMAXI\strokec6 ()\strokec4  \cf9 \strokec9 external\cf4 \strokec4  \strokec6 \{\cb1 \strokec4 \
+\cb3       \cf16 \strokec16 require\cf4 \strokec6 (\strokec4 IS_SCHEDULED\strokec6 ==\cf5 \strokec5 true\cf4 \strokec6 ,\strokec4  \cf8 \strokec8 "Rebates must be scheduled before release."\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3       \cf5 \strokec5 uint256\cf4 \strokec4  period\strokec6 =\strokec4 team_token\strokec6 .\strokec4 getCurrentPeriod\strokec6 ();\cb1 \strokec4 \
+\cb3       \cf16 \strokec16 require\cf4 \strokec6 ((\strokec4 period\strokec6 ==\cf7 \strokec7 5\cf4 \strokec4  \strokec6 ||\strokec4  period\strokec6 ==\cf7 \strokec7 11\cf4 \strokec4  \strokec6 ||\strokec4  period\strokec6 ==\cf7 \strokec7 17\cf4 \strokec6 ),\strokec4  \cf8 \strokec8 "Rebates may only happen in years 3, 6, or 9."\cf4 \strokec6 );\cb1 \strokec4 \
+\cb3       \cf5 \strokec5 uint\cf4 \strokec4  year \strokec6 =\strokec4  \strokec6 (\strokec4 period\strokec6 +\cf7 \strokec7 1\cf4 \strokec6 )/\cf7 \strokec7 2\cf4 \strokec6 ;\cb1 \strokec4 \
+\cb3       maxi_contract\strokec6 .\strokec4 transfer\strokec6 (\strokec4 TEAM_ADDRESS\strokec6 ,\strokec4 rebateSchedule\strokec6 [\strokec4 year\strokec6 ]);\cb1 \strokec4 \
+\cb3   \strokec6 \}\cb1 \strokec4 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3 \strokec6 \}\cb1 \strokec4 \
+\
+\
+}
