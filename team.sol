@@ -8,26 +8,28 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./PerpetualPool.sol";
 
-
-
 contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
+    // Events - used for analysis and offchain UI
     event Mint(
         address indexed minter,
-        uint256 amount
-    );
+        uint256 amount);
     event Stake(
         address indexed minter,
         uint256 amount, 
         uint256 staking_period,
-        bool is_roll_forward
+        bool is_roll_forward);
+    event EndStake(
+        address indexed minter,
+        uint256 amount, 
+        uint256 current_period,
+        uint256 penalty
     );
+    // External contract addresses
     address public TEAM_ADDRESS = address(this);
     address MAXI_ADDRESS = 0x12aF25Df1A643F4C30c918AB1212a240f452Ef4e;//0xDfF2bff8234E6eA2a66e761CA6a835cc6E96D4c4;// 0x0d86EB9f43C57f6FF3BC9E23D8F9d82503f0e84b;
-    
-    
     address constant HEX_ADDRESS = 0x2b591e99afE9f32eAA6214f7B7629768c40Eeb39; // "2b, 5 9 1e? that is the question..."
     address constant HEDRON_ADDRESS=0x3819f64f282bf135d62168C1e513280dAF905e06; 
-
+    // Token Interfaces
     IERC20 hex_contract = IERC20(HEX_ADDRESS);  //things like TransferFrom
     IERC20 hedron_contract=IERC20(HEDRON_ADDRESS);
     HEXToken hex_token = HEXToken(HEX_ADDRESS); //things like stakeStart
@@ -44,27 +46,29 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
     address MYSTERY_BOX_HOT;
 
     constructor() ERC20("Maximus Team", "TEAM") ReentrancyGuard() {
-        
         IS_MINTING_ONGOING=true;
         uint256 start_day=hex_token.currentDay();
-        uint256 mint_duration=14;
+        uint256 mint_duration=1;
         MINTING_PHASE_START = start_day;
         MINTING_PHASE_END = start_day+mint_duration;
         HAVE_POOLS_DEPLOYED = false;
         GLOBAL_TEAM_STAKED=0;
         deployPools();
         declareSupportedTokens();
+        deployStakeRewardDistributionContract();
     }
-
-
+    function deployStakeRewardDistributionContract() private {
+        StakeRewardDistribution srd = new StakeRewardDistribution(address(this));
+        STAKE_REWARD_DISTRIBUTION_ADDRESS = address(srd);
+    }
     // Pool Deployment 
     mapping (string =>address) public poolAddresses;
     function deployPools() private {
         require(HAVE_POOLS_DEPLOYED==false);
-        deployPool("Maximus Base", "BASE", 365, 7);
-        deployPool("Maximus Trio", "TRIO", 3*365, 7);
-        deployPool("Maximus Lucky", "LUCKY", 7*365, 7);
-        deployPool("Maximus Decimus", "DECI", 10*365, 7);
+        deployPool("Maximus Base", "BASE", 1, 1);
+        deployPool("Maximus Trio", "TRIO", 3, 1);
+        deployPool("Maximus Lucky", "LUCKY", 7, 1);
+        deployPool("Maximus Decimus", "DECI", 10, 1);
         HAVE_POOLS_DEPLOYED=true;
     }
     function deployPool(string memory name, string memory ticker, uint stake_length, uint256 mint_length) private {
@@ -72,19 +76,14 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
         poolAddresses[ticker] =address(pool);
     }
     
-    
-    
     function deployMysteryBox() private {
         MysteryBox newMB = new MysteryBox(address(this), MAXI_ADDRESS, MYSTERY_BOX_HOT);
         MYSTERY_BOX_ADDRESS = address(newMB);
     }
-
     function deploy_MAXIEscrow() private {
         MAXIEscrow newEscrow = new MAXIEscrow(address(this), MAXI_ADDRESS);
         ESCROW_ADDRESS = address(newEscrow);
     }
-    
-    
     /**
     * @dev View number of decimal places the TEAM token is divisible to. Manually overwritten from default 18 to 8 to match that of HEX.
     */
@@ -95,10 +94,6 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
     function decimals() public view virtual override returns (uint8) {
         return 8;
 	}
-    
-    
-
-
     /**
      * @dev Ensures that TEAM Minting Phase is ongoing and that the user has allowed the Team Contract address to spend the amount of MAXI the user intends to pledge to Maximus Team. 
      ** Then sends the designated MAXI from the user to the Maximus Team Contract address and mints 1 TEAM per MAXI pledged.
@@ -108,7 +103,6 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
     function mintTEAM(uint256 amount) nonReentrant external {
         require(IS_MINTING_ONGOING==true, "Minting Phase must still be ongoing.");
         require(maxi_contract.allowance(msg.sender, TEAM_ADDRESS)>=amount, "Please approve contract address as allowed spender in the MAXI contract.");
-        
         maxi_contract.transferFrom(msg.sender, TEAM_ADDRESS, amount);
         mint(amount);
         emit Mint(msg.sender, amount);
@@ -169,57 +163,60 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
         addressAmountStakedRunningTotal[msg.sender]= addressAmountStakedRunningTotal[msg.sender]+amount;
         emit Stake(msg.sender, amount, next_staking_period, false); // Log a stake event
     }
-     function removeStakeTEAM(uint256 amount) nonReentrant external {
-        // 1. Make sure that user has at least as much TEAM as they are trying to stake.
-        require(addressAmountStakedRunningTotal[msg.sender]>=amount, "You do not have that much TEAM.");
-        // 2. Record the stake 
-        decrementStake(amount);
-        
-        
-    }
-    
-    function decrementStake(uint256 amount) private {
-        require(addressAmountStakedRunningTotal[msg.sender]>=amount, "not enough");
-        uint256 current_period = getCurrentPeriod();
-        GLOBAL_TEAM_STAKED = GLOBAL_TEAM_STAKED - amount;
-        require(GLOBAL_TEAM_STAKED>=0, "global greater zero");
-        addressAmountStakedRunningTotal[msg.sender] = addressAmountStakedRunningTotal[msg.sender]-amount;
-        uint256 remintable_amount;
-        // if an existing stake is currently ongoing, remove from current period stake totals and apply penalty
-        if (isStakingPeriod()==true) {
-            if (addressPeriodEndTotal[msg.sender][current_period] >0) {
-                globalPeriodEndTotal[current_period] = globalPeriodEndTotal[current_period]-amount;
-                addressPeriodEndTotal[msg.sender][current_period] = addressPeriodEndTotal[msg.sender][current_period] - amount;
-                uint256 next_period = current_period+2;
-                if (addressPeriodEndTotal[msg.sender][next_period]>0){
-                    globalPeriodEndTotal[next_period] = globalPeriodEndTotal[next_period]-amount;
-                    addressPeriodEndTotal[msg.sender][next_period] = addressPeriodEndTotal[msg.sender][next_period] - amount;
-                }
-                uint256 scaled_penalty = (10**6)*(369)*amount; //unscale by dividing by 10**8
-                uint256 penalty = scaled_penalty/(10**8);
-                remintable_amount = amount - penalty;
-            }
-            else {
-                remintable_amount = amount;
-            }
 
+    function determine_penalty(uint256 amount, address user_address) public view returns (uint256) {
+        uint256 current_period = getCurrentPeriod();
+        uint256 penalty;
+        uint256 potential_penalty = 369*(10**4)*amount;
+        if (isStakingPeriod()==true) {
+            if ((addressPeriodEndTotal[user_address][current_period] >0) || (addressPeriodEndTotal[user_address][current_period+2] >0)) {
+                penalty = potential_penalty/(10**8);
+            }
         }
         else {
-            uint256 latest_staking_period = current_period-1;
-            uint256 next_period = current_period+1;
-            uint256 penalty=0;
-            if (addressPeriodEndTotal[msg.sender][next_period]>0){
-                globalPeriodEndTotal[next_period] = globalPeriodEndTotal[next_period]-amount;
-                addressPeriodEndTotal[msg.sender][next_period] = addressPeriodEndTotal[msg.sender][next_period] - amount;
-                uint256 scaled_penalty = (10**6)*(369)*amount; //unscale by dividing by 10**8
-                penalty = scaled_penalty/(10**8);
+            if (addressPeriodEndTotal[user_address][current_period+1] >0) {
+                penalty = potential_penalty/(10**8);
             }
-            remintable_amount = amount - penalty;
         }
-        mint(remintable_amount);
+        return penalty;
+    }
+    function endStake(uint256 amount) public {
+        uint256 current_period = getCurrentPeriod();
+        uint256 penalty = determine_penalty(amount, msg.sender);
+        uint256 amount_currently_staked = addressAmountStakedRunningTotal[msg.sender];
+        require(amount_currently_staked>=amount);
+        require(GLOBAL_TEAM_STAKED>=amount);
+        GLOBAL_TEAM_STAKED = GLOBAL_TEAM_STAKED - amount;
+        addressAmountStakedRunningTotal[msg.sender] = addressAmountStakedRunningTotal[msg.sender] - amount;
+        require(amount>penalty, "amount must be graeter then penalty");
+        mint(amount-penalty);
+
+        if (isStakingPeriod()==true) {
+            // decrease count from current staking period
+            if (addressPeriodEndTotal[msg.sender][current_period] >0){
+                addressPeriodEndTotal[msg.sender][current_period] = addressPeriodEndTotal[msg.sender][current_period] - amount;
+                globalPeriodEndTotal[current_period] = globalPeriodEndTotal[current_period] - amount;
+            }
+            // decrease count from rolled forward staking period
+            if (addressPeriodEndTotal[msg.sender][current_period+2] >0) {
+                addressPeriodEndTotal[msg.sender][current_period+2] = addressPeriodEndTotal[msg.sender][current_period+2] - amount;
+                globalPeriodEndTotal[current_period +2] = globalPeriodEndTotal[current_period+2] - amount;  
+            }
+        }
+        else {
+            // decrease count from upcoming
+            if (addressPeriodEndTotal[msg.sender][current_period+1] >0) {
+                addressPeriodEndTotal[msg.sender][current_period+1] = addressPeriodEndTotal[msg.sender][current_period+1] - amount;
+                globalPeriodEndTotal[current_period +1] = globalPeriodEndTotal[current_period+1] - amount;  
+            }
+        }
+        emit EndStake(msg.sender, amount, current_period, penalty);
+        
+        
     }
 
     function rollForwardStakedTEAM(uint256 amount) public {
+        require(addressAmountStakedRunningTotal[msg.sender]>=amount);
         uint256 current_period = getCurrentPeriod();
         bool is_staking_period = isStakingPeriod();
         uint256 latest_staking_period;
@@ -227,20 +224,17 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
         if (is_staking_period) {
             next_staking_period = current_period+2;
             latest_staking_period = current_period;
+
         }
         else {
             next_staking_period=current_period+1;
             latest_staking_period = current_period-1;
         }
-        require((addressPeriodEndTotal[msg.sender][latest_staking_period] - amountUserRollForward[latest_staking_period-1][msg.sender]) >=amount);
         globalPeriodEndTotal[next_staking_period] = amount + globalPeriodEndTotal[next_staking_period];
         addressPeriodEndTotal[msg.sender][next_staking_period] = amount + addressPeriodEndTotal[msg.sender][next_staking_period];
-        amountUserRollForward[latest_staking_period][msg.sender] = amountUserRollForward[latest_staking_period][msg.sender] + amount;
         emit Stake(msg.sender, amount, next_staking_period, true);
         
     }
-    
-
     function isStakingPeriod() public view returns (bool) {
         uint remainder = getCurrentPeriod()%2;
         if(remainder==0){
@@ -254,39 +248,40 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
         return PerpetualPool(poolAddresses["BASE"]).getCurrentPeriod();
     }
     
-    
-        
-        
-    
-    function claim(uint256 period, string memory ticker) nonReentrant external {
-        // 1. 
-        //require(period!=claimed_period)
-        //1. measure how much can be redeemed for each redeemable coin
-        // - look at the redemption rates for each coin times the amount of team they staked during period
-        // transfer(msg.sender, amount) -- for each coin
-        // indicate to the contract which periods have been redeemed
-        require(getCurrentPeriod()>period);
-        require(didUserClaim[ticker][period][msg.sender]==false);
-        uint256 total_amount_succesfully_staked = globalPeriodEndTotal[period];
-        uint256 scaled_percent_user = addressPeriodEndTotal[msg.sender][period] *(10**8) / total_amount_succesfully_staked;
-        uint256 redeemable_amount = scaled_percent_user * (periodEndBalance[ticker][period] +periodAmountClaimed[ticker][period] - periodStartBalance[ticker][period]) / (10**8);
-        IERC20(poolAddresses[ticker]).transfer(msg.sender, redeemable_amount);
-        didUserClaim[ticker][period][msg.sender] = true;
-    }
     mapping (string => mapping (uint => uint256)) public periodStartBalance; // uint256 hex_balance = periodStartBalance["HEX"][period]
-    mapping (string => mapping (uint => bool)) public didRecordPeriodStartBalance;
+    mapping (string => mapping (uint => bool)) public didRecordPeriodEndBalance;
     mapping (string =>mapping (uint => uint256)) public periodEndBalance; 
     mapping (string =>mapping (uint => uint256)) public periodAmountClaimed; 
     mapping(string => mapping (uint => mapping(address=>bool))) public didUserClaim;
 
+    mapping (string => mapping (uint => uint256)) public periodRedemptionRates;
 
-    function recordPeriodStartBalance(string memory ticker) public {
-        require(didRecordPeriodStartBalance[ticker][getCurrentPeriod()]==false);
-        periodStartBalance[ticker][getCurrentPeriod()] = IERC20(supportedTokens[ticker]).balanceOf(address(this));
-        didRecordPeriodStartBalance[ticker][getCurrentPeriod()]=true;
-        periodEndBalance[ticker][getCurrentPeriod()-1] = IERC20(supportedTokens[ticker]).balanceOf(address(this));
-
+    address public STAKE_REWARD_DISTRIBUTION_ADDRESS;
+    function prepareClaim(string memory ticker) public {
+        require(isStakingPeriod()==false);
+        uint256 latest_staking_period = getCurrentPeriod()-1;
+        require(didRecordPeriodEndBalance[ticker][latest_staking_period]==false);
+        periodEndBalance[ticker][latest_staking_period] = IERC20(supportedTokens[ticker]).balanceOf(address(this));
+        IERC20(supportedTokens[ticker]).transfer(STAKE_REWARD_DISTRIBUTION_ADDRESS, periodEndBalance[ticker][latest_staking_period]);
+        didRecordPeriodEndBalance[ticker][latest_staking_period]=true;
+        uint256 scaled_rate = periodEndBalance[ticker][latest_staking_period] *(10**8)/globalPeriodEndTotal[latest_staking_period];
+        periodRedemptionRates[ticker][latest_staking_period] = scaled_rate;
     }
+
+    function getAddressPeriodEndTotal(address staker_address, uint256 period) public view returns (uint256) {
+        return addressPeriodEndTotal[staker_address][period];
+    }
+
+    function getPeriodRedemptionRates(string memory ticker, uint256 period) public view returns (uint256) {
+        return periodRedemptionRates[ticker][period];
+    }
+    function getPoolAddresses(string memory ticker) public view returns (address) {
+        return poolAddresses[ticker];
+    }
+    function getSupportedTokens(string memory ticker) public view returns(address) {
+        return supportedTokens[ticker];
+    }
+
     mapping (string => address) public supportedTokens;
     string[] supportedTokenTickers = ["HEX", "MAXI", "HDRN", "BASE", "TRIO", "LUCKY", "DECI"];
     function declareSupportedTokens() public {
@@ -297,21 +292,8 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
         supportedTokens["TRIO"]=poolAddresses["TRIO"];
         supportedTokens["LUCKY"]=poolAddresses["LUCKY"];
         supportedTokens["DECI"]=poolAddresses["DECI"];
-
     }
     
-    
-
-    function recordBalances() public {
-        for (uint i=0; i < supportedTokenTickers.length; i++) {
-            recordPeriodStartBalance(supportedTokenTickers[i]);
-        }
-    }
-    
-    
-    
-    
-
     /**
     * @dev Returns the current HEX day."
     * @return Current HEX Day
@@ -341,6 +323,10 @@ contract MAXIToken {
 }
 contract TEAMToken {
     function getCurrentPeriod() public view returns (uint) {}
+    function getAddressPeriodEndTotal(address staker_address, uint256 period) public view returns (uint256) {}
+    function getPeriodRedemptionRates(string memory ticker, uint256 period) public view returns (uint256) {}
+    function getPoolAddresses(string memory ticker) public view returns (address) {}
+    function getSupportedTokens(string memory ticker) public view returns(address) {}
 }
 
 contract MysteryBox is ReentrancyGuard{
@@ -377,6 +363,33 @@ contract MysteryBox is ReentrancyGuard{
         maxi_contract.transferFrom(msg.sender, MYSTERY_BOX_HOT_ADDRESS, 300000*10**8);
         maxi_contract.transfer(MYSTERY_BOX_HOT_ADDRESS, amount);
     }
+}
+
+contract StakeRewardDistribution is ReentrancyGuard {
+    address TEAM_ADDRESS;
+    mapping (string => mapping (uint => uint256)) public periodStartBalance; // uint256 hex_balance = periodStartBalance["HEX"][period]
+    mapping (string => mapping (uint => bool)) public didRecordPeriodStartBalance;
+    mapping (string =>mapping (uint => uint256)) public periodEndBalance; 
+    mapping (string =>mapping (uint => uint256)) public periodAmountClaimed; 
+    mapping(string => mapping (uint => mapping(address=>bool))) public didUserClaim;
+    TEAMToken team_token;
+    constructor(address team_address) ReentrancyGuard(){
+      TEAM_ADDRESS=team_address;
+      team_token = TEAMToken(TEAM_ADDRESS);  
+    }
+
+    function claim(uint256 period, string memory ticker) nonReentrant external {
+        require(team_token.getCurrentPeriod()>period);
+        require(didUserClaim[ticker][period][msg.sender]==false);
+        uint256 total_amount_succesfully_staked = team_token.getAddressPeriodEndTotal(msg.sender, period);
+        uint256 redeemable_amount = team_token.getPeriodRedemptionRates(ticker,period) * total_amount_succesfully_staked / (10**8);
+        IERC20(team_token.getSupportedTokens(ticker)).transfer(msg.sender, redeemable_amount);
+        didUserClaim[ticker][period][msg.sender] = true;
+    }
+
+
+
+
 }
 
 contract  MAXIEscrow is ReentrancyGuard{
