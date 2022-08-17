@@ -121,9 +121,7 @@ contract PerpetualPool is ERC20, ERC20Burnable, ReentrancyGuard {
         CURRENT_PERIOD=0;
         
     }
-    function incrementPeriod() public {
-        CURRENT_PERIOD=CURRENT_PERIOD+1;
-    }
+    
     /**
     * @dev View number of decimal places the MAXI token is divisible to. Manually overwritten from default 18 to 8 to match that of HEX. 1 MAXI = 10^8 mini
     */
@@ -131,7 +129,7 @@ contract PerpetualPool is ERC20, ERC20Burnable, ReentrancyGuard {
     function decimals() public view virtual override returns (uint8) {
         return 8;
 	}
-    address MAXI_ADDRESS =address(this);
+    address POOL_ADDRESS =address(this);
     address constant HEX_ADDRESS = 0x2b591e99afE9f32eAA6214f7B7629768c40Eeb39; // "2b, 5 9 1e? that is the question..."
     address constant HEDRON_ADDRESS=0x3819f64f282bf135d62168C1e513280dAF905e06; 
 
@@ -212,12 +210,11 @@ contract PerpetualPool is ERC20, ERC20Burnable, ReentrancyGuard {
      */
     function pledgeHEX(uint256 amount) nonReentrant external {
         require(STAKE_IS_ACTIVE==false, "Minting may only be done if a stake is not active");
-
-        require(hex_token.currentDay()>MINTING_PHASE_START, "Minting Phase Hasn't Started");
+        require(hex_token.currentDay()>=MINTING_PHASE_START, "Minting Phase Hasn't Started");
         require(hex_token.currentDay()<=MINTING_PHASE_END, "Minting Phase is Done");
-        require(hex_contract.allowance(msg.sender, MAXI_ADDRESS)>=amount, "Please approve contract address as allowed spender in the hex contract.");
+        require(hex_contract.allowance(msg.sender, POOL_ADDRESS)>=amount, "Please approve contract address as allowed spender in the hex contract.");
         address from = msg.sender;
-        hex_contract.transferFrom(from, MAXI_ADDRESS, amount);
+        hex_contract.transferFrom(from, POOL_ADDRESS, amount);
         uint256 mintable_amount = (10**8)*amount/HEX_REDEMPTION_RATE;
         mint(mintable_amount);
     }
@@ -227,12 +224,10 @@ contract PerpetualPool is ERC20, ERC20Burnable, ReentrancyGuard {
      */
     function redeemHEX(uint256 amount_MAXI) nonReentrant external {
         require(STAKE_IS_ACTIVE==false, "Redemption can not happen while stake is active");
-        //require(HAS_STAKE_STARTED==false || HAS_STAKE_ENDED==true , "Redemption can only happen before stake starts or after stake ends.");
-        
         uint256 yourMAXI = balanceOf(msg.sender);
         require(yourMAXI>=amount_MAXI, "You do not have that much MAXI.");
         uint256 raw_redeemable_amount = amount_MAXI*HEX_REDEMPTION_RATE;
-        uint256 redeemable_amount = raw_redeemable_amount/100000000; //scaled back down to handle integer rounding
+        uint256 redeemable_amount = raw_redeemable_amount/(10**8); //scaled back down to handle integer rounding
         burn(amount_MAXI);
         hex_token.transfer(msg.sender, redeemable_amount);
         
@@ -301,12 +296,10 @@ contract PerpetualPool is ERC20, ERC20Burnable, ReentrancyGuard {
         MINTING_PHASE_START=hex_token.currentDay();
         MINTING_PHASE_END=MINTING_PHASE_START+MINT_DURATION;
         CURRENT_PERIOD = CURRENT_PERIOD+1;
-        
-
-        
+         
         
     }
-    function get_bonus_sharing_amount(uint256 principal,uint256 end_value, uint256 stake_length) private returns(uint256) {
+    function get_bonus_sharing_amount(uint256 principal,uint256 end_value, uint256 stake_length) private pure returns(uint256) {
         
         uint256 bpb_effective_hex;
         
@@ -343,7 +336,7 @@ contract PerpetualPool is ERC20, ERC20Burnable, ReentrancyGuard {
      * @param maxi_supply total maxi supply
      * @return redemption_rate Number of units redeemable per 10^8 decimal units of MAXI. Is scaled back down by 10^8 on redemption transaction.
      */
-    function calculate_redemption_rate(uint treasury_balance, uint maxi_supply) private view returns (uint redemption_rate) {
+    function calculate_redemption_rate(uint treasury_balance, uint maxi_supply) private pure returns (uint redemption_rate) {
         uint256 scalar = 10**8;
         uint256 scaled = (treasury_balance * scalar) / maxi_supply; // scale value to calculate redemption amount per maxi and then divide by same scalar after multiplication
         return scaled;
