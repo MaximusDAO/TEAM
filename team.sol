@@ -8,6 +8,9 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./PerpetualPool.sol"; // Contract for the perpetual pools
 
+
+
+
 /// @title Maximus DAO TEAM Contract
 /// @author Dip Catcher @TantoNomini
 /// @notice Contract for Minting and Staking TEAM.
@@ -21,20 +24,27 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
     event Stake(
         address indexed staker,
         uint256 amount, 
-        uint256 staking_period, 
-        uint256 stakeID);
+        uint256 current_period,
+        uint256 stakeID, 
+        bool is_initial);
     event ExtendStake(
         address indexed staker,
         uint256 amount, 
         uint256 staking_period, 
         uint256 stakeID);
-    event EndStake(
-        address indexed staker,
+    event EarlyEndStake(address indexed staker,
         uint256 amount, 
-        uint256 current_period,
-        uint256 penalty, 
-        uint256 stakeID
-    );
+        uint256 staking_period, 
+        uint256 stakeID);
+    event EndExpiredStake(address indexed staker,
+        uint256 amount, 
+        uint256 staking_period, 
+        uint256 stakeID);
+    event RestakeExpiredStake(address indexed staker,
+        uint256 amount, 
+        uint256 staking_period, 
+        uint256 stakeID);
+    
     // Global Variables Setup
     address public TEAM_ADDRESS = address(this);
     address MAXI_ADDRESS = 0x12aF25Df1A643F4C30c918AB1212a240f452Ef4e;// 0x0d86EB9f43C57f6FF3BC9E23D8F9d82503f0e84b;
@@ -186,9 +196,7 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
     // If a stake record for a user has already been created for a particular period, the existing one will be updated.
     struct StakeRecord {
         address staker; // staker
-        uint initial_period; // first served stake period
-        uint256 amount; // total amount of TEAM added to stake
-        uint256 amount_unstaked; // total amount of TEAM unstaked. Once a user unstakes from a period the amount minus amount_unstaked will be zero.
+        uint256 balance; // the remaining balance of the stake.
         uint stakeID; // how a user identifies their stakes. Each period stake increments stakeID.
         uint256 stake_expiry_period; // what period this stake is scheduled to serve through. May be extended to the next staking period during the stake_expiry_period.
         mapping(uint => uint256) stakedTeamPerPeriod; // A record of the number of TEAM that successfully served each staking period during this stake. This number crystallizes as each staking period ends and is used to claim rewards.
@@ -197,50 +205,48 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
     uint256 public GLOBAL_AMOUNT_STAKED; // Running total number of TEAM staked by all users. Incremented when any user stakes TEAM and decremented when any user end-stakes TEAM.
     mapping (address=> uint256) public USER_AMOUNT_STAKED;// Running total number of TEAM staked per user. Incremented when user stakes TEAM and decremented when user end-stakes TEAM.
     mapping (uint => uint256) public globalStakedTeamPerPeriod; // A record of the number of TEAM that are successfully staked for each stake period. Value crystallizes in each period as period ends.
-    uint public numStakes; // total number of stakes 
-    mapping (address => uint) numUserStakes; // total number of stakes any user
     mapping (address =>mapping(uint => StakeRecord)) public stakes; // Mapping of all users stake records.
     
     /*
     @notice stakeTeam(amount) User facing function for staking TEAM.
-    @dev 1) Checks if user balance exceeds input stake amount. 2) Saves stake data via newStake(). 3) Burns the staked TEAM. 4) Update global and user stake tally.
+    @dev 1) Checks if user balance exceeds input stake amount. 2) Saves stake data via newStakeRecord(). 3) Burns the staked TEAM. 4) Update global and user stake tally.
     @param amount number of TEAM staked, include enough zeros to support 8 decimal units. to stake 1 TEAM, enter amount = 100000000
     */
-    function stakeTeam(uint256 amount) public {
+    function stakeTeam(uint256 amount) public nonReentrant {
         require(balanceOf(msg.sender)>=amount, "Insufficient TEAM Balance");
-        newStake(amount); // updates the stake record
+        require(amount>0, "Can not stake Zero TEAM.");
+        newStakeRecord(amount); // updates the stake record
         burn(amount); //when TEAM is staked, it is burnt and then is reminted when it is unstaked.
         GLOBAL_AMOUNT_STAKED = GLOBAL_AMOUNT_STAKED + amount;
-        USER_AMOUNT_STAKED[msg.sender]=USER_AMOUNT_STAKED[msg.sender] +amount;
+        USER_AMOUNT_STAKED[msg.sender]=USER_AMOUNT_STAKED[msg.sender] + amount;
     }
         /*
         @dev Function that determines which is the next staking period, and creates or updates the users stake record for that period.
         */
-        function newStake(uint256 amount) private {
-            uint256 next_staking_period = getNextStakingPeriod();
-            StakeRecord storage stake = stakes[msg.sender][next_staking_period];
-            if (stake.initiated==false){
-                numUserStakes[msg.sender] = numUserStakes[msg.sender]+1;
+        function newStakeRecord(uint256 amount) private {
+            uint256 next_staking_period = getNextStakingPeriod(); // the contract period number for each staking period is used as a unique identifier for a stake. 
+            StakeRecord storage stake = stakes[msg.sender][next_staking_period]; // retrieves the existing stake record for this upcoming staking period, or render a new one if this is the first time.
+            bool is_initial;
+            if (stake.initiated==false){ // first time setup. values that should not change if this user stakes again in this period.
                 stake.stakeID = next_staking_period;
-                stake.initiated=true;
+                stake.initiated = true;
                 stake.staker = msg.sender;
-                stake.initial_period=next_staking_period;
+                stake.stake_expiry_period = next_staking_period;
+                is_initial = true;
             }
-            
-            stake.amount =amount +stake.amount;
-            stake.stake_expiry_period = next_staking_period;
-            stake.stakedTeamPerPeriod[next_staking_period]=stake.stakedTeamPerPeriod[next_staking_period]+amount;
-            globalStakedTeamPerPeriod[next_staking_period]=globalStakedTeamPerPeriod[next_staking_period]+amount;
+            stake.balance = amount + stake.balance;
+            stake.stakedTeamPerPeriod[next_staking_period] = amount + stake.stakedTeamPerPeriod[next_staking_period];
+            globalStakedTeamPerPeriod[next_staking_period] = amount + globalStakedTeamPerPeriod[next_staking_period];
+            emit Stake(msg.sender, amount, getCurrentPeriod(), stake.stakeID, is_initial);
         }
     /*
     @notice earlyEndStakeTeam(stakeID, amount) User facing function for ending a part or all of a stake either before or during its expiry period. A 3.69% penalty is applied to the amount reminted to the user.
-    @dev checks that they have this stake, updates the stake record via earlyEndStake() function, updates the global tallies, calculates the early end stake penalty, and remints back into existance the amount requested minus penalty.
+    @dev checks that they have this stake, updates the stake record via earlyEndStakeRecord() function, updates the global tallies, calculates the early end stake penalty, and remints back into existance the amount requested minus penalty.
     @param stakeID the ID of the stake the user wants to early end stake
     @param amount number of TEAM early end staked, include enough zeros to support 8 decimal units. to end stake 1 TEAM, enter amount = 100000000
     */
-    function earlyEndStakeTeam(uint256 stakeID, uint256 amount) public {
-        
-        earlyEndStake(stakeID, amount); // update the stake record
+    function earlyEndStakeTeam(uint256 stakeID, uint256 amount) public nonReentrant {
+        earlyEndStakeRecord(stakeID, amount); // update the stake record
         uint256 current_potential_penalty_scaled = 369*(10**4)*amount; // scaled up before division 
         uint256 penalty = current_potential_penalty_scaled/(10**8); 
         GLOBAL_AMOUNT_STAKED = GLOBAL_AMOUNT_STAKED - amount;
@@ -252,14 +258,14 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
         @param stakeID the ID of the stake the user wants to early end stake
         @param amount number of TEAM early end staked, include enough zeros to support 8 decimal units. to end stake 1 TEAM, enter amount = 100000000
         */
-        function earlyEndStake(uint256 stakeID, uint256 amount) private {
-            uint256 current_period=getCurrentPeriod();
+        function earlyEndStakeRecord(uint256 stakeID, uint256 amount) private {
+            uint256 current_period = getCurrentPeriod();
             uint256 next_staking_period = getNextStakingPeriod();
             StakeRecord storage stake = stakes[msg.sender][stakeID];
             require(stake.initiated==true, "Requested Stake ID Must exist, meaning there must be as many stakes entered by the user.");
             require(stake.stake_expiry_period>=current_period, "This stake has already expired. Use endCompletedStake instead."); // must be before the stake has expired
-            require(stake.amount-stake.amount_unstaked>=amount, "You are requesting more than is actively staked in this stake.");
-            stake.amount_unstaked=stake.amount_unstaked+amount;
+            require(stake.balance>=amount, "You may not request to end stake more than your current balance.");
+            stake.balance = stake.balance - amount;
             // Decrement staked TEAM from next staking period
             if (stake.stakedTeamPerPeriod[next_staking_period]>0){
                 globalStakedTeamPerPeriod[next_staking_period]=globalStakedTeamPerPeriod[next_staking_period]-amount;
@@ -270,6 +276,7 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
                 globalStakedTeamPerPeriod[current_period]=globalStakedTeamPerPeriod[current_period]-amount;
                 stake.stakedTeamPerPeriod[current_period]=stake.stakedTeamPerPeriod[current_period]-amount;
             }
+            emit EarlyEndStake(msg.sender, amount, stake.stake_expiry_period, stakeID);
         }
     /*
     @notice End a stake which has already served its full staking period. This function updates your stake record and remints your staked TEAM back into your address.
@@ -286,9 +293,10 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
         function endExpiredStake(uint256 stakeID, uint256 amount) private {
             uint256 current_period=getCurrentPeriod();
             StakeRecord storage stake = stakes[msg.sender][stakeID];
-            require(stake.stake_expiry_period<current_period);
-            require(stake.amount-stake.amount_unstaked>amount);
-            stake.amount_unstaked=stake.amount_unstaked+amount;
+            require(stake.stake_expiry_period<current_period, "Stake must be expired. Try earlyEndStakeTeam()");
+            require(stake.balance>=amount, "Your stake balance must be greater than the amount requested.");
+            stake.balance = stake.balance-amount;
+            emit EndExpiredStake(msg.sender, amount, stake.stake_expiry_period, stakeID);
         }
 
     /*
@@ -297,7 +305,7 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
 
             
     */
-    function extendStake(uint256 stakeID) public {
+    function extendStake(uint256 stakeID) public nonReentrant {
         stakeExtension(stakeID);
     }
     /*
@@ -307,24 +315,26 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
             uint256 current_period=getCurrentPeriod();
             uint256 next_staking_period = getNextStakingPeriod();
             StakeRecord storage stake = stakes[msg.sender][stakeID];
+            require(isStakingPeriod(), "Can only extend a stake during an active staking period.");
             require(stake.stake_expiry_period==current_period, "Can only extend a stake set to expire immediately after the current period. If stake period already ended, run restakeExpiredStake()");
             stake.stake_expiry_period=next_staking_period;
-            uint256 active_amount = stake.amount - stake.amount_unstaked;
-            globalStakedTeamPerPeriod[next_staking_period]=globalStakedTeamPerPeriod[next_staking_period]+active_amount;
-            stake.stakedTeamPerPeriod[next_staking_period]=stake.stakedTeamPerPeriod[next_staking_period]+active_amount;
+            stake.stakedTeamPerPeriod[next_staking_period] = stake.stakedTeamPerPeriod[next_staking_period] + stake.balance;
+            globalStakedTeamPerPeriod[next_staking_period] = globalStakedTeamPerPeriod[next_staking_period] + stake.balance;
+            emit ExtendStake(msg.sender, stake.balance, next_staking_period, stakeID);
         }
     /*
     @notice This function ends and restakes a stake which has been completed (if current period is greater than stake expiry period). It ends the stake but does not remint your TEAM, instead it rolls those team into a brand new stake record starting in the next staking period.
     @param stakeID the ID of the stake the user wants to extend into the next staking period.
     */
-    function restakeExpiredStake(uint256 stakeID) public {
+    function restakeExpiredStake(uint256 stakeID) public nonReentrant {
         uint256 current_period=getCurrentPeriod();
         StakeRecord storage stake = stakes[msg.sender][stakeID];
         require(stake.stake_expiry_period<current_period, "Stake must be expired to run this. Try extendStake()");
-        require(stake.amount_unstaked<stake.amount);
-        uint256 active_amount = stake.amount - stake.amount_unstaked;
-        stake.amount_unstaked=stake.amount;
-        newStake(active_amount);
+        require(stake.balance > 0);
+        newStakeRecord(stake.balance);
+        uint256 amount = stake.balance;
+        stake.balance = 0;
+        emit RestakeExpiredStake(msg.sender, amount, stake.stake_expiry_period, stakeID);
     }
   
 /// Rewards Allocation   
@@ -458,7 +468,7 @@ contract StakeRewardDistribution is ReentrancyGuard {
     /*
     @notice Run this function to retrieve and save all of the supported token addresses from the TEAM contract into the Stake Reward Distribution contract. This should be run once after the supported tokens are declared in the team contract.
     */
-    function prepareSupportedTokens() public {
+    function prepareSupportedTokens() nonReentrant public {
         collectSupportedTokenAddress("HEX");
         collectSupportedTokenAddress("MAXI");
         collectSupportedTokenAddress("HDRN");
