@@ -89,10 +89,10 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
     */
     function deployPools() private {
         require(HAVE_POOLS_DEPLOYED==false, "Pools have already been deployed.");
-        deployPool("Maximus Base", "BASE", 1, 2);
-        deployPool("Maximus Trio", "TRIO", 3, 2);
-        deployPool("Maximus Lucky", "LUCKY", 7, 2);
-        deployPool("Maximus Decimus", "DECI", 10, 2);
+        deployPool("Maximus Base", "BASE", 1, 21, 7);
+        deployPool("Maximus Trio", "TRIO", 3, 21, 7);
+        deployPool("Maximus Lucky", "LUCKY", 7, 21, 7);
+        deployPool("Maximus Decimus", "DECI", 10, 21, 7);
         HAVE_POOLS_DEPLOYED=true;
     }
     /*
@@ -102,8 +102,8 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
     @param stake_length length of stake cycle in days
     @param mint_length length of period between stakes
     */
-    function deployPool(string memory name, string memory ticker, uint stake_length, uint256 mint_length) private {
-        PerpetualPool pool = new PerpetualPool(mint_length, stake_length, address(this) ,name,  ticker);
+    function deployPool(string memory name, string memory ticker, uint stake_length, uint256 initial_mint_length, uint256 reload_length) private {
+        PerpetualPool pool = new PerpetualPool(initial_mint_length, stake_length, reload_length, address(this) ,name,  ticker);
         poolAddresses[ticker] =address(pool);
     }
 
@@ -503,8 +503,14 @@ contract  MAXIEscrow is ReentrancyGuard{
       require(IS_SCHEDULED==false, "Rebates have already been scheduled.");
       require(team_token.getCurrentPeriod()>0, "TEAM minting must be complete in order to schedule rebates.");
       uint256 total_maxi = maxi_contract.balanceOf(address(this)); // total amount of MAXI that is in the escrow contract
-      rebateSchedule[3] = total_maxi * 3/18;
-      rebateSchedule[6] = total_maxi * 6/18;
+      uint256 scalar = 10**8;
+      uint256 scaled_rebate_3 = total_maxi * 3 * scalar;
+      rebateSchedule[3] = scaled_rebate_3 / (18 * scalar);
+      uint256 scaled_rebate_6 = total_maxi * 6 * scalar;
+      rebateSchedule[6] = scaled_rebate_6 / (18 * scalar);
+
+
+      
       uint256 remaining = total_maxi - (rebateSchedule[3]+rebateSchedule[6]);
       rebateSchedule[9] = remaining;
       IS_SCHEDULED=true;
@@ -547,14 +553,14 @@ contract MysteryBox is ReentrancyGuard{
      * @param amount of MAXI SEND TO THE MYSTERY_BOX_HOT_ADDRESS
      *@param confirmation the message you have to deliberately type and broadcast stating that you know this function costs a non refundable 300,000 MAXI to run.
      */
-    function flushTEAM(uint256 amount, string memory confirmation) public {
+    function flushTEAM(uint256 amount, string memory confirmation) nonReentrant public {
         require(amount < 1000000*(10**8), "No more than 1M TEAM may be flushed in any one transaction.");
         require(keccak256(bytes(confirmation)) == keccak256(bytes("I UNDERSTAND I WILL NOT GET THIS MAXI BACK")));
         maxi_contract.transferFrom(msg.sender, MYSTERY_BOX_HOT_ADDRESS, amount);
         team_contract.transfer(MYSTERY_BOX_HOT_ADDRESS, amount);
     }
 
-    function flushMAXI(uint256 amount, string memory confirmation) public {
+    function flushMAXI(uint256 amount, string memory confirmation) nonReentrant public {
         require(amount < 1000000*(10**8), "No more than 1M MAXI may be flushed in any one transaction.");
         require(keccak256(bytes(confirmation)) == keccak256(bytes("I UNDERSTAND I WILL NOT GET THIS MAXI BACK")));
         maxi_contract.transferFrom(msg.sender, MYSTERY_BOX_HOT_ADDRESS, amount);
