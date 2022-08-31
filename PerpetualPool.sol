@@ -228,7 +228,7 @@ contract PerpetualPool is ERC20, ERC20Burnable, ReentrancyGuard {
         hex_token.transfer(TEAM_CONTRACT_ADDRESS, bpb_bonus_sharing_amount);
         hedron_token.transfer(TEAM_CONTRACT_ADDRESS,hedron_contract.balanceOf(address(this)));
         uint256 total_supply = IERC20(address(this)).totalSupply();
-        HEX_REDEMPTION_RATE  = calculate_redemption_rate(hex_balance, total_supply);
+        HEX_REDEMPTION_RATE  = calculate_redemption_rate(hex_contract.balanceOf(address(this)), total_supply);
         END_STAKER=msg.sender;
         CURRENT_STAKE_PRINCIPAL=0;
         STAKE_IS_ACTIVE=false;
@@ -257,7 +257,7 @@ contract PerpetualPool is ERC20, ERC20Burnable, ReentrancyGuard {
         uint256 scaled_lpb_multiplier;
         uint256 lpb_threshold = 3650;
         if (stake_length>lpb_threshold) {
-            scaled_lpb_multiplier = 2;
+            scaled_lpb_multiplier = 2*(10**8);
         }
         else {
             scaled_lpb_multiplier = 2*((10**8)*(stake_length))/lpb_threshold;
