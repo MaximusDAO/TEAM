@@ -8,9 +8,6 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./PerpetualPool.sol"; // Contract for the perpetual pools
 
-
-
-
 /// @title Maximus DAO TEAM Contract
 /// @author Dip Catcher @TantoNomini
 /// @notice Contract for Minting and Staking TEAM.
@@ -122,6 +119,8 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
         supportedTokens["LUCKY"]=poolAddresses["LUCKY"];
         supportedTokens["DECI"]=poolAddresses["DECI"];
         supportedTokens["TEAM"]=address(this);
+        supportedTokens["ICSA"]=0xfc4913214444aF5c715cc9F7b52655e788A569ed;
+        
     }
     /*
     @dev Alternative way to get the address of a supported token. If token is not declared via declareSupportedTokens() it will return 0x0000...00000
@@ -138,7 +137,6 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
         StakeRewardDistribution srd = new StakeRewardDistribution(address(this));
         STAKE_REWARD_DISTRIBUTION_ADDRESS = address(srd);
     }
-    
 
     // MINTING
     /**
@@ -368,6 +366,7 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
         prepareClaim("LUCKY");
         prepareClaim("DECI");
         prepareClaim("TEAM");
+        prepareClaim("ICSA");
     }
 
     function getAddressPeriodEndTotal(address staker_address, uint256 period, uint stakeID) public view returns (uint256) {
@@ -477,6 +476,7 @@ contract StakeRewardDistribution is ReentrancyGuard {
         collectSupportedTokenAddress("LUCKY");
         collectSupportedTokenAddress("DECI");
         collectSupportedTokenAddress("TEAM");
+        collectSupportedTokenAddress("ICSA");
     }
 }
 /// @title 369 MAXI Escrow Contract
@@ -523,7 +523,10 @@ contract  MAXIEscrow is ReentrancyGuard{
       uint256 period=team_token.getCurrentPeriod();
       require((period==5 || period==11 || period==17), "Rebates may only happen in years 3, 6, or 9.");
       uint year = (period+1)/2;
+      require(rebateSchedule[year]>0, "Rebate cant be zero.");
       maxi_contract.transfer(TEAM_ADDRESS,rebateSchedule[year]);
+      rebateSchedule[year]=0;
+
   }
 }
 /// @title Mystery Box
