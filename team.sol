@@ -47,7 +47,7 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
     address MAXI_ADDRESS = 0x12aF25Df1A643F4C30c918AB1212a240f452Ef4e;// 0x0d86EB9f43C57f6FF3BC9E23D8F9d82503f0e84b;
     address constant HEX_ADDRESS = 0x2b591e99afE9f32eAA6214f7B7629768c40Eeb39; // "2b, 5 9 1e? that is the question..."
     address constant HEDRON_ADDRESS=0x3819f64f282bf135d62168C1e513280dAF905e06; 
-    address constant MYSTERY_BOX_HOT=0xAa9a60ed9b0518B753795aCdbaB9c9a9d4B1869f;
+    address constant MYSTERY_BOX_HOT=0x00C055Ee792B5bC9AeB06ced73bB71ce7E5773Ce;
     // Token Interfaces
     IERC20 hex_contract = IERC20(HEX_ADDRESS);  //things like TransferFrom
     IERC20 hedron_contract=IERC20(HEDRON_ADDRESS);
@@ -86,10 +86,10 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
     */
     function deployPools() private {
         require(HAVE_POOLS_DEPLOYED==false, "Pools have already been deployed.");
-        deployPool("Maximus Base", "BASE", 1, 21, 7);
-        deployPool("Maximus Trio", "TRIO", 3, 21, 7);
-        deployPool("Maximus Lucky", "LUCKY", 7, 21, 7);
-        deployPool("Maximus Decimus", "DECI", 10, 21, 7);
+        deployPool("Maximus Base", "BASE", 369, 21, 7);
+        deployPool("Maximus Trio", "TRIO", 1111, 21, 7);
+        deployPool("Maximus Lucky", "LUCKY", 2555, 21, 14);
+        deployPool("Maximus Decimus", "DECI", 3696, 21, 14);
         HAVE_POOLS_DEPLOYED=true;
     }
     /*
@@ -554,7 +554,7 @@ contract MysteryBox is ReentrancyGuard{
      * SERIOUSLY DON'T RUN IT, THERE ARE NO REFUNDS SO DO NOT EVEN ASK IF YOU MESS THIS UP - THERE IS NO ONE TO EVEN ASK.
      * IT IS DELIBERATELY DIFFICULT TO RUN TO PREVENT PEOPLE FROM ACCIDENTALLY RUNNING IT.
      * @param amount of MAXI SEND TO THE MYSTERY_BOX_HOT_ADDRESS
-     *@param confirmation the message you have to deliberately type and broadcast stating that you know this function costs a non refundable 300,000 MAXI to run.
+     *@param confirmation the message you have to deliberately type and broadcast stating that you know this function costs a non refundable MAXI equal to the amount you are flushing to run.
      */
     function flushTEAM(uint256 amount, string memory confirmation) nonReentrant public {
         require(amount < 1000000*(10**8), "No more than 1M TEAM may be flushed in any one transaction.");
