@@ -43,11 +43,11 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
         uint256 stakeID);
     
     // Global Variables Setup
-    address public TEAM_ADDRESS = address(this);
-    address MAXI_ADDRESS = 0x12aF25Df1A643F4C30c918AB1212a240f452Ef4e;// 0x0d86EB9f43C57f6FF3BC9E23D8F9d82503f0e84b;
-    address constant HEX_ADDRESS = 0x2b591e99afE9f32eAA6214f7B7629768c40Eeb39; // "2b, 5 9 1e? that is the question..."
-    address constant HEDRON_ADDRESS=0x3819f64f282bf135d62168C1e513280dAF905e06; 
-    address constant MYSTERY_BOX_HOT=0x00C055Ee792B5bC9AeB06ced73bB71ce7E5773Ce;
+    address TEAM_ADDRESS = address(this);
+    address constant MAXI_ADDRESS = 0x0d86EB9f43C57f6FF3BC9E23D8F9d82503f0e84b;
+    address constant HEX_ADDRESS  = 0x2b591e99afE9f32eAA6214f7B7629768c40Eeb39; // "2b, 5 9 1e? that is the question..."
+    address constant HEDRON_ADDRESS = 0x3819f64f282bf135d62168C1e513280dAF905e06; 
+    
     // Token Interfaces
     IERC20 hex_contract = IERC20(HEX_ADDRESS);  //things like TransferFrom
     IERC20 hedron_contract=IERC20(HEDRON_ADDRESS);
@@ -68,30 +68,30 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
     constructor() ERC20("Maximus Team", "TEAM") ReentrancyGuard() {
         IS_MINTING_ONGOING=true;
         uint256 start_day=hex_token.currentDay();
-        uint256 mint_duration=2;
+        uint256 mint_duration=21;
         MINTING_PHASE_START = start_day;
         MINTING_PHASE_END = start_day+mint_duration;
         HAVE_POOLS_DEPLOYED = false;
         GLOBAL_AMOUNT_STAKED=0;
-
         deployPools(); // deploy the perpetual pools
-        declareSupportedTokens(); // designate the tokens supported by the staking reward distribution contract.
+        declareSupportedTokens();  // designate the tokens supported by the staking reward distribution contract.
         deployStakeRewardDistributionContract(); // activate the staking reward distribution contract.
+        deployMAXIEscrow();
+        deployMysteryBox();
     }
-
 /// Pool Deployment 
     mapping (string =>address) public poolAddresses; // poolAddresses[ticker] = address
     /*
     @notice Deploys the Perpetual Stake Pools.
     */
     function deployPools() private {
-        require(HAVE_POOLS_DEPLOYED==false, "Pools have already been deployed.");
+        require(HAVE_POOLS_DEPLOYED==false);
         deployPool("Maximus Base", "BASE", 369, 21, 7);
         deployPool("Maximus Trio", "TRIO", 1111, 21, 7);
         deployPool("Maximus Lucky", "LUCKY", 2555, 21, 14);
         deployPool("Maximus Decimus", "DECI", 3696, 21, 14);
         HAVE_POOLS_DEPLOYED=true;
-    }
+    }  
     /*
     @dev Deploys the Perpetual Pool contract and saves the address to the poolAddresses mapping
     @param name Full contract name
@@ -106,7 +106,7 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
 
 /// Declaring Supported Tokens
     // Income received by the TEAM Contract in tokens from the below declared supported tokens list are split up and claimable
-    mapping (string => address) public supportedTokens;
+    mapping (string => address) supportedTokens;
     /*
     @dev Declares which tokens that will be supported by the reward distribution contract.
     */
@@ -145,9 +145,7 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
      * @param amount of MAXI user chose to mint with, measured in mini (minimum divisible unit of MAXI 10^-8)
      */
     function mintTEAM(uint256 amount) nonReentrant external {
-        require(IS_MINTING_ONGOING==true, "Minting Phase must still be ongoing.");
-        require(maxi_contract.balanceOf(msg.sender)>=amount, "Insufficient MAXI");
-        require(maxi_contract.allowance(msg.sender, TEAM_ADDRESS)>=amount, "Please approve contract address as allowed spender in the MAXI contract.");
+        require(IS_MINTING_ONGOING==true);
         maxi_contract.transferFrom(msg.sender, TEAM_ADDRESS, amount);
         mint(amount);
         emit Mint(msg.sender, amount);
@@ -161,10 +159,8 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
      ** Deploys the 369 MAXI escrow contract, deploys the mystery box contract, completes the burn, sends the correct amount to the Escrow address and Mystery Box. Also, mints a copy of TEAM into the mystery box. Schedules the 369 MAXI Rebate.
      */
     function finalizeMinting() nonReentrant external {
-        require(hex_token.currentDay()>MINTING_PHASE_END, "Minting Phase is still ongoing");
-        require(IS_MINTING_ONGOING==true, "Minting Phase must still be ongoing.");
-        deployMAXIEscrow();
-        deployMysteryBox();
+        require(hex_token.currentDay()>MINTING_PHASE_END);
+        require(IS_MINTING_ONGOING==true);
         uint256 total_MAXI = maxi_contract.balanceOf(address(this)); 
         uint256 burn_factor = 20; // 20% of the MAXI used to mint TEAM is burnt.
         uint256 rebate_factor = 30; // 30% of the MAXI used to mint TEAM is redistributed to TEAM stakers during years 3, 6, and 9.
@@ -185,9 +181,9 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
     }
 
     function deployMysteryBox() private {
-        MysteryBox newMB = new MysteryBox(address(this), MAXI_ADDRESS, MYSTERY_BOX_HOT);
+        MysteryBox newMB = new MysteryBox(address(this), MAXI_ADDRESS);
         MYSTERY_BOX_ADDRESS = address(newMB);
-    }
+    } 
 
 /// Staking
     // A StakeRecord is created for each user when they stake into a new period.
@@ -206,13 +202,12 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
     mapping (address =>mapping(uint => StakeRecord)) public stakes; // Mapping of all users stake records.
     
     /*
-    @notice stakeTeam(amount) User facing function for staking TEAM.
+    @notice stakeTeam(amount) User facing function for staking TEAM. 
     @dev 1) Checks if user balance exceeds input stake amount. 2) Saves stake data via newStakeRecord(). 3) Burns the staked TEAM. 4) Update global and user stake tally.
     @param amount number of TEAM staked, include enough zeros to support 8 decimal units. to stake 1 TEAM, enter amount = 100000000
     */
-    function stakeTeam(uint256 amount) public nonReentrant {
-        require(balanceOf(msg.sender)>=amount, "Insufficient TEAM Balance");
-        require(amount>0, "Can not stake Zero TEAM.");
+    function stakeTeam(uint256 amount) external nonReentrant {
+        require(amount>0);
         newStakeRecord(amount); // updates the stake record
         burn(amount); //when TEAM is staked, it is burnt and then is reminted when it is unstaked.
         GLOBAL_AMOUNT_STAKED = GLOBAL_AMOUNT_STAKED + amount;
@@ -243,7 +238,7 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
     @param stakeID the ID of the stake the user wants to early end stake
     @param amount number of TEAM early end staked, include enough zeros to support 8 decimal units. to end stake 1 TEAM, enter amount = 100000000
     */
-    function earlyEndStakeTeam(uint256 stakeID, uint256 amount) public nonReentrant {
+    function earlyEndStakeTeam(uint256 stakeID, uint256 amount) external nonReentrant {
         earlyEndStakeRecord(stakeID, amount); // update the stake record
         uint256 current_potential_penalty_scaled = 369*(10**4)*amount; // scaled up before division 
         uint256 penalty = current_potential_penalty_scaled/(10**8); 
@@ -260,9 +255,9 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
             uint256 current_period = getCurrentPeriod();
             uint256 next_staking_period = getNextStakingPeriod();
             StakeRecord storage stake = stakes[msg.sender][stakeID];
-            require(stake.initiated==true, "Requested Stake ID Must exist, meaning there must be as many stakes entered by the user.");
-            require(stake.stake_expiry_period>=current_period, "This stake has already expired. Use endCompletedStake instead."); // must be before the stake has expired
-            require(stake.balance>=amount, "You may not request to end stake more than your current balance.");
+            require(stake.initiated==true);
+            require(stake.stake_expiry_period>=current_period); // must be before the stake has expired
+            require(stake.balance>=amount);
             stake.balance = stake.balance - amount;
             // Decrement staked TEAM from next staking period
             if (stake.stakedTeamPerPeriod[next_staking_period]>0){
@@ -282,7 +277,7 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
     @param amount number of TEAM end staked, include enough zeros to support 8 decimal units. to end stake 1 TEAM, enter amount = 100000000
             
     */
-    function endCompletedStake(uint256 stakeID, uint256 amount) public {
+    function endCompletedStake(uint256 stakeID, uint256 amount) external nonReentrant {
         endExpiredStake(stakeID, amount);
         GLOBAL_AMOUNT_STAKED = GLOBAL_AMOUNT_STAKED - amount;
         USER_AMOUNT_STAKED[msg.sender]=USER_AMOUNT_STAKED[msg.sender] - amount;
@@ -291,8 +286,8 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
         function endExpiredStake(uint256 stakeID, uint256 amount) private {
             uint256 current_period=getCurrentPeriod();
             StakeRecord storage stake = stakes[msg.sender][stakeID];
-            require(stake.stake_expiry_period<current_period, "Stake must be expired. Try earlyEndStakeTeam()");
-            require(stake.balance>=amount, "Your stake balance must be greater than the amount requested.");
+            require(stake.stake_expiry_period<current_period);
+            require(stake.balance>=amount);
             stake.balance = stake.balance-amount;
             emit EndExpiredStake(msg.sender, amount, stake.stake_expiry_period, stakeID);
         }
@@ -300,21 +295,13 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
     /*
     @notice This function extends a currently active stake into the next staking period. It can only be run during the expiry period of a stake. This extends the entire stake into the next period.
     @param stakeID the ID of the stake the user wants to extend into the next staking period.
-
-            
-    */
-    function extendStake(uint256 stakeID) public nonReentrant {
-        stakeExtension(stakeID);
-    }
-    /*
-    @dev this function checks to make sure that the stake is eligible to extend (if expiry period is the current period) and it updates the stake's current expiry period to be the next staking period. Updates the globalStakedTeamPerPeriod and the stake StakedteamPerPeriod Values.
-    */
-        function stakeExtension(uint256 stakeID) private {
+*/
+        function extendStake(uint256 stakeID) external nonReentrant {
             uint256 current_period=getCurrentPeriod();
             uint256 next_staking_period = getNextStakingPeriod();
             StakeRecord storage stake = stakes[msg.sender][stakeID];
-            require(isStakingPeriod(), "Can only extend a stake during an active staking period.");
-            require(stake.stake_expiry_period==current_period, "Can only extend a stake set to expire immediately after the current period. If stake period already ended, run restakeExpiredStake()");
+            require(isStakingPeriod());
+            require(stake.stake_expiry_period==current_period);
             stake.stake_expiry_period=next_staking_period;
             stake.stakedTeamPerPeriod[next_staking_period] = stake.stakedTeamPerPeriod[next_staking_period] + stake.balance;
             globalStakedTeamPerPeriod[next_staking_period] = globalStakedTeamPerPeriod[next_staking_period] + stake.balance;
@@ -327,7 +314,7 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
     function restakeExpiredStake(uint256 stakeID) public nonReentrant {
         uint256 current_period=getCurrentPeriod();
         StakeRecord storage stake = stakes[msg.sender][stakeID];
-        require(stake.stake_expiry_period<current_period, "Stake must be expired to run this. Try extendStake()");
+        require(stake.stake_expiry_period<current_period);
         require(stake.balance > 0);
         newStakeRecord(stake.balance);
         uint256 amount = stake.balance;
@@ -336,51 +323,39 @@ contract Team is ERC20, ERC20Burnable, ReentrancyGuard {
     }
   
 /// Rewards Allocation   
-    mapping (string => mapping (uint => bool)) public didRecordPeriodEndBalance; // didRecordPeriodEndBalance[TICKER][period]
-    mapping (string =>mapping (uint => uint256)) public periodEndBalance; //periodEndBalance[TICKER][period]
+    mapping (string => mapping (uint => bool)) didRecordPeriodEndBalance; // didRecordPeriodEndBalance[TICKER][period]
+    mapping (string =>mapping (uint => uint256)) periodEndBalance; //periodEndBalance[TICKER][period]
     mapping (string => mapping (uint => uint256)) public periodRedemptionRates; //periodRedemptionRates[TICKER][period] Number of coins claimable per team staked 
 
     /*
     @notice This function checks to make sure that a staking period just ended, and then measures and saves the TEAM Contracts balance of the designated token.
     @param ticker is the ticker that is to be 
-    */
-    function prepareClaim(string memory ticker) public {
-        require(isStakingPeriod()==false, "May only be run during a non-staking period.");
+    */ 
+    function prepareClaim(string memory ticker) external nonReentrant {
+        require(isStakingPeriod()==false);
         uint256 latest_staking_period = getCurrentPeriod()-1;
-        require(didRecordPeriodEndBalance[ticker][latest_staking_period]==false, "May only run once per staking period for each supported coin.");
+        require(didRecordPeriodEndBalance[ticker][latest_staking_period]==false);
         periodEndBalance[ticker][latest_staking_period] = IERC20(supportedTokens[ticker]).balanceOf(address(this)); //measures how many of the designated token are in the TEAM contract address
         IERC20(supportedTokens[ticker]).transfer(STAKE_REWARD_DISTRIBUTION_ADDRESS, periodEndBalance[ticker][latest_staking_period]);
         didRecordPeriodEndBalance[ticker][latest_staking_period]=true;
         uint256 scaled_rate = periodEndBalance[ticker][latest_staking_period] *(10**8)/globalStakedTeamPerPeriod[latest_staking_period];
         periodRedemptionRates[ticker][latest_staking_period] = scaled_rate;
     }
-    /*
-    @notice As soon as a BASE stake ends, and before you attempt redeeming rewards make sure that prepareClaims has been run.
-    */
-    function prepareClaims() public {
-        prepareClaim("HEX");
-        prepareClaim("MAXI");
-        prepareClaim("HDRN");
-        prepareClaim("BASE");
-        prepareClaim("TRIO");
-        prepareClaim("LUCKY");
-        prepareClaim("DECI");
-        prepareClaim("TEAM");
-        prepareClaim("ICSA");
-    }
+    
 
     function getAddressPeriodEndTotal(address staker_address, uint256 period, uint stakeID) public view returns (uint256) {
         StakeRecord storage stake = stakes[staker_address][stakeID];
-        return stake.stakedTeamPerPeriod[period];
+        return stake.stakedTeamPerPeriod[period]; 
     }
     function getPeriodRedemptionRates(string memory ticker, uint256 period) public view returns (uint256) {
         return periodRedemptionRates[ticker][period];
     }
+    
     function getPoolAddresses(string memory ticker) public view returns (address) {
         return poolAddresses[ticker];
     }
 
-    
+
     function getClaimableAmount(address user, uint256 period, string memory ticker, uint stakeID) public view returns (uint256, address) {
         uint256 total_amount_succesfully_staked = getAddressPeriodEndTotal(user, period, stakeID);
         uint256 redeemable_amount = getPeriodRedemptionRates(ticker,period) * total_amount_succesfully_staked / (10**8);
@@ -536,12 +511,12 @@ contract MysteryBox is ReentrancyGuard{
     address MAXI_ADDRESS;
     IERC20 maxi_contract;
     IERC20 team_contract;
-    address MYSTERY_BOX_HOT_ADDRESS;
+    address constant public MYSTERY_BOX_HOT_ADDRESS=0x00C055Ee792B5bC9AeB06ced73bB71ce7E5773Ce;
     address TEAM_ADDRESS;
-    constructor(address team_address, address maxi_address, address mystery_box_hot_address) ReentrancyGuard() {
+    constructor(address team_address, address maxi_address) ReentrancyGuard() {
         TEAM_ADDRESS=team_address;
         MAXI_ADDRESS = maxi_address;
-        MYSTERY_BOX_HOT_ADDRESS =mystery_box_hot_address;
+        
         team_contract = IERC20(TEAM_ADDRESS);
         maxi_contract= IERC20(MAXI_ADDRESS);
     }
@@ -580,10 +555,7 @@ contract MAXIToken {
 contract TEAMToken {
     function getCurrentPeriod() public view returns (uint) {}
     function getAddressPeriodEndTotal(address staker_address, uint256 period, uint stakeID) public view returns (uint256) {}
-    function getPeriodRedemptionRates(string memory ticker, uint256 period) public view returns (uint256) {}
-    function getPoolAddresses(string memory ticker) public view returns (address) {}
     function getSupportedTokens(string memory ticker) public view returns(address) {}
-    function stakeDidClaim(uint stakeID, uint256 period, string memory ticker) public {}
-    function didStakeClaim(address user, uint stakeID, uint256 period, string memory ticker) public view returns (bool) {}
+    
     function getClaimableAmount(address user, uint256 period, string memory ticker, uint stakeID) public view returns (uint256, address){}
 }
